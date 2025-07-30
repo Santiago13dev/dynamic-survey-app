@@ -1,0 +1,28 @@
+<mat-card *ngIf="survey" class="results-card">
+  <h2>Resultados para: {{ survey.title }}</h2>
+  <div class="actions">
+    <button mat-button color="primary" (click)="exportCSV()">Exportar CSV</button>
+    <button mat-button color="primary" (click)="exportPDF()">Exportar PDF</button>
+  </div>
+  <div *ngFor="let res of radioResults">
+    <mat-card class="result-section">
+      <h3>{{ res.question.text }}</h3>
+      <canvas baseChart
+              [data]="res.chartData"
+              [type]="'bar'"
+              [options]="{ responsive: true, maintainAspectRatio: false }">
+      </canvas>
+    </mat-card>
+  </div>
+  <div *ngFor="let res of textResults">
+    <mat-card class="result-section">
+      <h3>{{ res.question.text }}</h3>
+      <mat-list *ngIf="res.answers.length; else noAnswers">
+        <mat-list-item *ngFor="let ans of res.answers">{{ ans }}</mat-list-item>
+      </mat-list>
+      <ng-template #noAnswers>
+        <p>No hay respuestas registradas.</p>
+      </ng-template>
+    </mat-card>
+  </div>
+</mat-card>

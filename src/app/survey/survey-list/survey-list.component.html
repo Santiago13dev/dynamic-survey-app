@@ -1,0 +1,26 @@
+<mat-card>
+  <mat-card-title>Tus encuestas</mat-card-title>
+  <mat-card-actions align="end">
+    <button mat-raised-button color="accent" routerLink="/surveys/new">Crear nueva encuesta</button>
+  </mat-card-actions>
+
+  <mat-table [dataSource]="surveys$ | async" class="mat-elevation-z2 full-width-table">
+    <!-- Título Column -->
+    <ng-container matColumnDef="titulo">
+      <mat-header-cell *matHeaderCellDef> Título </mat-header-cell>
+      <mat-cell *matCellDef="let encuesta"> {{ encuesta.titulo }} </mat-cell>
+    </ng-container>
+
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="acciones">
+      <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
+      <mat-cell *matCellDef="let encuesta">
+        <button mat-button color="primary" [routerLink]="['/surveys', encuesta.id]">Responder</button>
+        <button mat-button color="warn" [routerLink]="['/surveys', encuesta.id, 'results']">Resultados</button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</mat-card>

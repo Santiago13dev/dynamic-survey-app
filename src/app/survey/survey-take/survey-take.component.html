@@ -1,0 +1,30 @@
+<mat-card *ngIf="survey" class="survey-card">
+  <h2>{{ survey.title }}</h2>
+  <p>{{ survey.description }}</p>
+  <form [formGroup]="answerForm" (ngSubmit)="onSubmit()">
+    <div *ngFor="let question of survey.questions">
+      <mat-card class="question-card">
+        <h3>{{ question.text }}</h3>
+        <div [ngSwitch]="question.type">
+          <!-- Text question -->
+          <div *ngSwitchCase="'text'">
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput [formControlName]="question.id" required>
+            </mat-form-field>
+          </div>
+          <!-- Radio question -->
+          <div *ngSwitchCase="'radio'">
+            <mat-radio-group [formControlName]="question.id">
+              <mat-radio-button *ngFor="let option of question.options" [value]="option">
+                {{ option }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit">Enviar respuestas</button>
+    </div>
+  </form>
+</mat-card>

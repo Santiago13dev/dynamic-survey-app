@@ -1,0 +1,16 @@
+<mat-card class="login-card">
+  <h1>Iniciar sesión</h1>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Usuario</mat-label>
+      <input matInput formControlName="username" required>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Contraseña</mat-label>
+      <input matInput type="password" formControlName="password" required>
+    </mat-form-field>
+    <button mat-raised-button color="primary" class="full-width" type="submit">
+      Entrar
+    </button>
+  </form>
+</mat-card>

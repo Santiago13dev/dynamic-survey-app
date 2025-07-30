@@ -1,0 +1,55 @@
+<mat-card class="survey-card">
+  <h2>Crear encuesta</h2>
+  <form [formGroup]="surveyForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Título</mat-label>
+      <input matInput formControlName="title" required>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="description" rows="2"></textarea>
+    </mat-form-field>
+    <div formArrayName="questions">
+      <div *ngFor="let question of questions.controls; let i = index" [formGroupName]="i" class="question-group">
+        <mat-card class="question-card">
+          <div class="question-header">
+            <h3>Pregunta {{ i + 1 }}</h3>
+            <button mat-icon-button color="warn" type="button" (click)="removeQuestion(i)" aria-label="Eliminar pregunta">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Texto de la pregunta</mat-label>
+            <input matInput formControlName="text" required>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="type" (selectionChange)="onTypeChange(i)">
+              <mat-option value="text">Texto libre</mat-option>
+              <mat-option value="radio">Opción única</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- Options for radio type -->
+          <div *ngIf="question.get('type')?.value === 'radio'" formArrayName="options" class="options-container">
+            <div *ngFor="let option of getOptions(i).controls; let j = index" class="option-row">
+              <mat-form-field appearance="outline" class="option-field">
+                <mat-label>Opción {{ j + 1 }}</mat-label>
+                <input matInput [formControlName]="j" required>
+              </mat-form-field>
+              <button mat-icon-button color="warn" type="button" (click)="removeOption(i, j)" aria-label="Eliminar opción">
+                <mat-icon>remove_circle</mat-icon>
+              </button>
+            </div>
+            <button mat-button type="button" color="accent" (click)="addOption(i)">Añadir opción</button>
+          </div>
+        </mat-card>
+      </div>
+      <button mat-button type="button" color="accent" (click)="addQuestion()">
+        Añadir pregunta
+      </button>
+    </div>
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit">Guardar encuesta</button>
+    </div>
+  </form>
+</mat-card>

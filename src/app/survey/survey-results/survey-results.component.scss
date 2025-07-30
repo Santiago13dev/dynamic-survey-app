@@ -1,0 +1,22 @@
+.results-card {
+  margin: 1rem auto;
+  max-width: 900px;
+  padding: 1rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.result-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+}
+
+canvas {
+  width: 100% !important;
+  height: 300px !important;
+}

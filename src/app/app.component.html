@@ -1,0 +1,13 @@
+<mat-toolbar color="primary">
+  <span>{{ title }}</span>
+  <span class="spacer"></span>
+  <ng-container *ngIf="authService.isLoggedIn; else loginLink">
+    <button mat-button (click)="logout()">Cerrar sesión</button>
+  </ng-container>
+  <ng-template #loginLink>
+    <a mat-button routerLink="/login">Iniciar sesión</a>
+  </ng-template>
+</mat-toolbar>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

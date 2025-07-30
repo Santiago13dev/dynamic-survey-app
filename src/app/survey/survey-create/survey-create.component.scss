@@ -1,0 +1,34 @@
+.survey-card {
+  margin: 1rem auto;
+  max-width: 800px;
+  padding: 1rem;
+}
+
+// Each question card gets a colored border on the left to visually separate questions.
+.question-card {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-left: 4px solid #3f51b5; /* primary color */
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.options-container {
+  margin-left: 1rem;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.actions {
+  margin-top: 1rem;
+  text-align: right;
+}

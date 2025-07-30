@@ -1,0 +1,27 @@
+.survey-container {
+  padding: 24px;
+  margin: 40px auto;
+  max-width: 900px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.survey-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  button {
+    font-weight: 500;
+  }
+}
+
+.full-width-table {
+  width: 100%;
+}
