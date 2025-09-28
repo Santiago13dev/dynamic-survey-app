@@ -1,13 +1,49 @@
-<mat-toolbar color="primary">
-  <span>{{ title }}</span>
-  <span class="spacer"></span>
-  <ng-container *ngIf="authService.isLoggedIn; else loginLink">
-    <button mat-button (click)="logout()">Cerrar sesión</button>
-  </ng-container>
-  <ng-template #loginLink>
-    <a mat-button routerLink="/login">Iniciar sesión</a>
-  </ng-template>
-</mat-toolbar>
-<div class="container">
-  <router-outlet></router-outlet>
+<div class="app-container">
+  <header>
+    <mat-toolbar class="modern-toolbar" color="primary">
+      <div class="toolbar-content">
+        <div class="brand-section">
+          <mat-icon class="brand-icon">poll</mat-icon>
+          <span class="brand-title">{{ title }}</span>
+        </div>
+        
+        <div class="spacer"></div>
+        
+        <nav class="nav-section">
+          <ng-container *ngIf="authService.isLoggedIn; else loginLink">
+            <button mat-button class="nav-button" routerLink="/surveys" routerLinkActive="active">
+              <mat-icon>list</mat-icon>
+              <span class="nav-text">Encuestas</span>
+            </button>
+            <button mat-button class="nav-button" routerLink="/surveys/new" routerLinkActive="active">
+              <mat-icon>add_circle_outline</mat-icon>
+              <span class="nav-text">Crear</span>
+            </button>
+            <button mat-button class="nav-button user-menu" (click)="logout()">
+              <mat-icon>logout</mat-icon>
+              <span class="nav-text">Salir</span>
+            </button>
+          </ng-container>
+          <ng-template #loginLink>
+            <button mat-raised-button color="accent" routerLink="/login" class="login-button">
+              <mat-icon>login</mat-icon>
+              Iniciar sesión
+            </button>
+          </ng-template>
+        </nav>
+      </div>
+    </mat-toolbar>
+  </header>
+
+  <main class="main-content">
+    <div class="content-wrapper fade-in">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>&copy; 2024 Dynamic Survey App. Hecho con ❤️ para crear encuestas increíbles.</p>
+    </div>
+  </footer>
 </div>
