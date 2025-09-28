@@ -1,26 +1,226 @@
-<mat-card>
-  <mat-card-title>Tus encuestas</mat-card-title>
-  <mat-card-actions align="end">
-    <button mat-raised-button color="accent" routerLink="/surveys/new">Crear nueva encuesta</button>
-  </mat-card-actions>
+<div class="surveys-container slide-up">
+  <!-- Header section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon>poll</mat-icon>
+          Mis Encuestas
+        </h1>
+        <p class="page-subtitle">Gestiona y analiza tus encuestas de manera eficiente</p>
+      </div>
+      <div class="actions-section">
+        <button mat-raised-button color="accent" routerLink="/surveys/new" class="create-button">
+          <mat-icon>add</mat-icon>
+          Nueva Encuesta
+        </button>
+      </div>
+    </div>
+  </div>
 
-  <mat-table [dataSource]="surveys$ | async" class="mat-elevation-z2 full-width-table">
-    <!-- Título Column -->
-    <ng-container matColumnDef="titulo">
-      <mat-header-cell *matHeaderCellDef> Título </mat-header-cell>
-      <mat-cell *matCellDef="let encuesta"> {{ encuesta.titulo }} </mat-cell>
-    </ng-container>
+  <!-- Search and filters section -->
+  <div class="filters-section">
+    <mat-card class="filters-card">
+      <div class="filters-content">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar encuestas</mat-label>
+          <input matInput 
+                 [(ngModel)]="searchTerm" 
+                 (input)="onSearch()"
+                 placeholder="Busca por título o descripción...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Estado</mat-label>
+          <mat-select [(value)]="selectedStatus" (selectionChange)="onFilterChange()">
+            <mat-option value="">Todos</mat-option>
+            <mat-option value="active">Activas</mat-option>
+            <mat-option value="draft">Borradores</mat-option>
+            <mat-option value="archived">Archivadas</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-    <!-- Acciones Column -->
-    <ng-container matColumnDef="acciones">
-      <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
-      <mat-cell *matCellDef="let encuesta">
-        <button mat-button color="primary" [routerLink]="['/surveys', encuesta.id]">Responder</button>
-        <button mat-button color="warn" [routerLink]="['/surveys', encuesta.id, 'results']">Resultados</button>
-      </mat-cell>
-    </ng-container>
+        <button mat-icon-button class="view-toggle" (click)="toggleView()" [title]="viewMode === 'grid' ? 'Vista de lista' : 'Vista de tarjetas'">
+          <mat-icon>{{ viewMode === 'grid' ? 'view_list' : 'view_module' }}</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+  </div>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
-</mat-card>
+  <!-- Content section -->
+  <div class="content-section">
+    <!-- Empty state -->
+    <div *ngIf="(filteredSurveys$ | async)?.length === 0" class="empty-state">
+      <div class="empty-illustration">
+        <mat-icon>poll</mat-icon>
+      </div>
+      <h3>No hay encuestas disponibles</h3>
+      <p>Comienza creando tu primera encuesta para recopilar respuestas valiosas</p>
+      <button mat-raised-button color="accent" routerLink="/surveys/new">
+        <mat-icon>add</mat-icon>
+        Crear Primera Encuesta
+      </button>
+    </div>
+
+    <!-- Grid view -->
+    <div *ngIf="viewMode === 'grid' && (filteredSurveys$ | async)?.length! > 0" class="surveys-grid">
+      <div *ngFor="let encuesta of filteredSurveys$ | async; trackBy: trackBySurveyId" class="survey-card-wrapper">
+        <mat-card class="survey-card" [class.draft]="encuesta.status === 'draft'">
+          <mat-card-header class="card-header">
+            <div class="status-indicator" [class]="encuesta.status || 'active'"></div>
+            <div class="card-title-section">
+              <mat-card-title class="survey-title" [title]="encuesta.titulo">
+                {{ encuesta.titulo }}
+              </mat-card-title>
+              <mat-card-subtitle class="survey-meta">
+                <span class="response-count">
+                  <mat-icon>people</mat-icon>
+                  {{ encuesta.respuestas || 0 }} respuestas
+                </span>
+                <span class="creation-date">
+                  <mat-icon>schedule</mat-icon>
+                  {{ encuesta.fechaCreacion | date:'short' }}
+                </span>
+              </mat-card-subtitle>
+            </div>
+            <button mat-icon-button class="menu-button" [matMenuTriggerFor]="surveyMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #surveyMenu="matMenu">
+              <button mat-menu-item (click)="duplicateSurvey(encuesta)">
+                <mat-icon>content_copy</mat-icon>
+                Duplicar
+              </button>
+              <button mat-menu-item (click)="archiveSurvey(encuesta)">
+                <mat-icon>archive</mat-icon>
+                {{ encuesta.status === 'archived' ? 'Desarchivar' : 'Archivar' }}
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="deleteSurvey(encuesta)" class="delete-option">
+                <mat-icon>delete</mat-icon>
+                Eliminar
+              </button>
+            </mat-menu>
+          </mat-card-header>
+
+          <mat-card-content class="card-content">
+            <div class="survey-description" *ngIf="encuesta.descripcion">
+              {{ encuesta.descripcion }}
+            </div>
+            <div class="survey-stats">
+              <div class="stat-item">
+                <span class="stat-label">Preguntas</span>
+                <span class="stat-value">{{ encuesta.preguntas?.length || 0 }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Completadas</span>
+                <span class="stat-value">{{ encuesta.completadas || 0 }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions class="card-actions">
+            <button mat-button color="primary" [routerLink]="['/surveys', encuesta.id]" class="action-button">
+              <mat-icon>play_arrow</mat-icon>
+              Responder
+            </button>
+            <button mat-button color="accent" [routerLink]="['/surveys', encuesta.id, 'results']" class="action-button">
+              <mat-icon>analytics</mat-icon>
+              Resultados
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Table view -->
+    <div *ngIf="viewMode === 'table' && (filteredSurveys$ | async)?.length! > 0" class="surveys-table-container">
+      <mat-card class="table-card">
+        <mat-table [dataSource]="filteredSurveys$ | async" class="surveys-table">
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef class="status-column">Estado</mat-header-cell>
+            <mat-cell *matCellDef="let encuesta" class="status-column">
+              <div class="status-badge" [class]="encuesta.status || 'active'">
+                {{ getStatusLabel(encuesta.status) }}
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Title Column -->
+          <ng-container matColumnDef="titulo">
+            <mat-header-cell *matHeaderCellDef>Título</mat-header-cell>
+            <mat-cell *matCellDef="let encuesta" class="title-cell">
+              <div class="survey-info">
+                <span class="survey-name">{{ encuesta.titulo }}</span>
+                <span class="survey-description" *ngIf="encuesta.descripcion">{{ encuesta.descripcion }}</span>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Stats Column -->
+          <ng-container matColumnDef="stats">
+            <mat-header-cell *matHeaderCellDef>Estadísticas</mat-header-cell>
+            <mat-cell *matCellDef="let encuesta" class="stats-cell">
+              <div class="table-stats">
+                <span class="stat-chip">
+                  <mat-icon>help</mat-icon>
+                  {{ encuesta.preguntas?.length || 0 }} preguntas
+                </span>
+                <span class="stat-chip">
+                  <mat-icon>people</mat-icon>
+                  {{ encuesta.respuestas || 0 }} respuestas
+                </span>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Date Column -->
+          <ng-container matColumnDef="fecha">
+            <mat-header-cell *matHeaderCellDef>Fecha</mat-header-cell>
+            <mat-cell *matCellDef="let encuesta">
+              {{ encuesta.fechaCreacion | date:'medium' }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="acciones">
+            <mat-header-cell *matHeaderCellDef class="actions-column">Acciones</mat-header-cell>
+            <mat-cell *matCellDef="let encuesta" class="actions-column">
+              <div class="table-actions">
+                <button mat-icon-button [routerLink]="['/surveys', encuesta.id]" title="Responder">
+                  <mat-icon>play_arrow</mat-icon>
+                </button>
+                <button mat-icon-button [routerLink]="['/surveys', encuesta.id, 'results']" title="Ver resultados">
+                  <mat-icon>analytics</mat-icon>
+                </button>
+                <button mat-icon-button [matMenuTriggerFor]="tableMenu" title="Más opciones">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #tableMenu="matMenu">
+                  <button mat-menu-item (click)="duplicateSurvey(encuesta)">
+                    <mat-icon>content_copy</mat-icon>
+                    Duplicar
+                  </button>
+                  <button mat-menu-item (click)="archiveSurvey(encuesta)">
+                    <mat-icon>archive</mat-icon>
+                    {{ encuesta.status === 'archived' ? 'Desarchivar' : 'Archivar' }}
+                  </button>
+                  <mat-divider></mat-divider>
+                  <button mat-menu-item (click)="deleteSurvey(encuesta)" class="delete-option">
+                    <mat-icon>delete</mat-icon>
+                    Eliminar
+                  </button>
+                </mat-menu>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></mat-row>
+        </mat-table>
+      </mat-card>
+    </div>
+  </div>
+</div>

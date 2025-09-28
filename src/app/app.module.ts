@@ -17,6 +17,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTabsModule } from '@angular/material/tabs';
 
 // Chart library
 import { NgChartsModule } from 'ng2-charts';
@@ -27,7 +38,7 @@ import { AppRoutingModule } from './app-routing.module';
 // Components
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
-import { SurveyListComponent } from './survey/survey-list/survey-list.component';
+import { SurveyListComponent, ConfirmDialogComponent } from './survey/survey-list/survey-list.component';
 import { SurveyCreateComponent } from './survey/survey-create/survey-create.component';
 import { SurveyTakeComponent } from './survey/survey-take/survey-take.component';
 import { SurveyResultsComponent } from './survey/survey-results/survey-results.component';
@@ -47,7 +58,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     SurveyListComponent,
     SurveyCreateComponent,
     SurveyTakeComponent,
-    SurveyResultsComponent
+    SurveyResultsComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -69,6 +81,17 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     MatFormFieldModule,
     MatSnackBarModule,
     MatTableModule,
+    MatProgressSpinnerModule,
+    MatMenuModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatChipsModule,
+    MatBadgeModule,
+    MatTooltipModule,
+    MatStepperModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
+    MatTabsModule,
     // Charts
     NgChartsModule
   ],

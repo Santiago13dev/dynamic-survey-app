@@ -1,55 +1,334 @@
-<mat-card class="survey-card">
-  <h2>Crear encuesta</h2>
-  <form [formGroup]="surveyForm" (ngSubmit)="onSubmit()">
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Título</mat-label>
-      <input matInput formControlName="title" required>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Descripción</mat-label>
-      <textarea matInput formControlName="description" rows="2"></textarea>
-    </mat-form-field>
-    <div formArrayName="questions">
-      <div *ngFor="let question of questions.controls; let i = index" [formGroupName]="i" class="question-group">
-        <mat-card class="question-card">
-          <div class="question-header">
-            <h3>Pregunta {{ i + 1 }}</h3>
-            <button mat-icon-button color="warn" type="button" (click)="removeQuestion(i)" aria-label="Eliminar pregunta">
-              <mat-icon>delete</mat-icon>
+<div class="create-survey-container slide-up">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon>create</mat-icon>
+          Crear Nueva Encuesta
+        </h1>
+        <p class="page-subtitle">Diseña tu encuesta paso a paso y obtén insights valiosos</p>
+      </div>
+      <div class="actions-section">
+        <button mat-button routerLink="/surveys" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+          Volver
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stepper Navigation -->
+  <mat-card class="stepper-card">
+    <mat-horizontal-stepper #stepper linear="false" class="survey-stepper">
+      <!-- Step 1: Basic Information -->
+      <mat-step [stepControl]="basicInfoForm" label="Información Básica" state="info">
+        <ng-template matStepLabel>Información Básica</ng-template>
+        <div class="step-content">
+          <div class="step-header">
+            <mat-icon>info</mat-icon>
+            <h3>Detalles de la encuesta</h3>
+            <p>Proporciona la información básica de tu encuesta</p>
+          </div>
+          
+          <form [formGroup]="basicInfoForm" class="basic-info-form">
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Título de la encuesta</mat-label>
+                <input matInput 
+                       formControlName="title" 
+                       placeholder="Ej: Encuesta de satisfacción del cliente"
+                       required>
+                <mat-error *ngIf="basicInfoForm.get('title')?.hasError('required')">
+                  El título es requerido
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Descripción (opcional)</mat-label>
+                <textarea matInput 
+                          formControlName="description" 
+                          rows="3"
+                          placeholder="Describe el propósito y contexto de tu encuesta..."
+                          maxlength="500"></textarea>
+                <mat-hint align="end">{{ getDescriptionLength() }}/500</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="category-field">
+                <mat-label>Categoría</mat-label>
+                <mat-select formControlName="category">
+                  <mat-option value="customer-satisfaction">Satisfacción del Cliente</mat-option>
+                  <mat-option value="employee-feedback">Feedback de Empleados</mat-option>
+                  <mat-option value="market-research">Investigación de Mercado</mat-option>
+                  <mat-option value="product-feedback">Feedback de Producto</mat-option>
+                  <mat-option value="event-feedback">Feedback de Evento</mat-option>
+                  <mat-option value="other">Otra</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="duration-field">
+                <mat-label>Tiempo estimado (minutos)</mat-label>
+                <input matInput 
+                       type="number" 
+                       formControlName="estimatedDuration"
+                       min="1"
+                       max="60"
+                       placeholder="5">
+              </mat-form-field>
+            </div>
+          </form>
+
+          <div class="step-actions">
+            <button mat-raised-button 
+                    color="primary" 
+                    (click)="stepper.next()"
+                    [disabled]="basicInfoForm.invalid">
+              <mat-icon>arrow_forward</mat-icon>
+              Siguiente: Preguntas
             </button>
           </div>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Texto de la pregunta</mat-label>
-            <input matInput formControlName="text" required>
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Tipo</mat-label>
-            <mat-select formControlName="type" (selectionChange)="onTypeChange(i)">
-              <mat-option value="text">Texto libre</mat-option>
-              <mat-option value="radio">Opción única</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <!-- Options for radio type -->
-          <div *ngIf="question.get('type')?.value === 'radio'" formArrayName="options" class="options-container">
-            <div *ngFor="let option of getOptions(i).controls; let j = index" class="option-row">
-              <mat-form-field appearance="outline" class="option-field">
-                <mat-label>Opción {{ j + 1 }}</mat-label>
-                <input matInput [formControlName]="j" required>
-              </mat-form-field>
-              <button mat-icon-button color="warn" type="button" (click)="removeOption(i, j)" aria-label="Eliminar opción">
-                <mat-icon>remove_circle</mat-icon>
-              </button>
-            </div>
-            <button mat-button type="button" color="accent" (click)="addOption(i)">Añadir opción</button>
+        </div>
+      </mat-step>
+
+      <!-- Step 2: Questions -->
+      <mat-step [stepControl]="questionsForm" label="Preguntas" state="edit">
+        <ng-template matStepLabel>Preguntas</ng-template>
+        <div class="step-content">
+          <div class="step-header">
+            <mat-icon>help</mat-icon>
+            <h3>Diseña tus preguntas</h3>
+            <p>Crea preguntas efectivas para obtener la información que necesitas</p>
           </div>
-        </mat-card>
-      </div>
-      <button mat-button type="button" color="accent" (click)="addQuestion()">
-        Añadir pregunta
-      </button>
-    </div>
-    <div class="actions">
-      <button mat-raised-button color="primary" type="submit">Guardar encuesta</button>
-    </div>
-  </form>
-</mat-card>
+
+          <form [formGroup]="questionsForm">
+            <div formArrayName="questions" class="questions-container">
+              <div *ngFor="let question of questions.controls; let i = index" 
+                   [formGroupName]="i" 
+                   class="question-wrapper">
+                <mat-card class="question-card">
+                  <mat-card-header class="question-header">
+                    <div class="question-number">
+                      <span>{{ i + 1 }}</span>
+                    </div>
+                    <div class="question-title">
+                      <mat-card-title>Pregunta {{ i + 1 }}</mat-card-title>
+                      <mat-card-subtitle>{{ getQuestionTypeLabel(question.get('type')?.value) }}</mat-card-subtitle>
+                    </div>
+                    <div class="question-actions">
+                      <button mat-icon-button 
+                              [matMenuTriggerFor]="questionMenu" 
+                              [disabled]="questions.length === 1"
+                              class="menu-button">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #questionMenu="matMenu">
+                        <button mat-menu-item (click)="duplicateQuestion(i)">
+                          <mat-icon>content_copy</mat-icon>
+                          Duplicar
+                        </button>
+                        <button mat-menu-item (click)="removeQuestion(i)" [disabled]="questions.length === 1" class="delete-option">
+                          <mat-icon>delete</mat-icon>
+                          Eliminar
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </mat-card-header>
+
+                  <mat-card-content class="question-content">
+                    <div class="form-row">
+                      <mat-form-field appearance="outline" class="question-text-field">
+                        <mat-label>Texto de la pregunta</mat-label>
+                        <textarea matInput 
+                                  formControlName="text" 
+                                  rows="2"
+                                  placeholder="Escribe tu pregunta aquí..."
+                                  required
+                                  maxlength="200"></textarea>
+                        <mat-error *ngIf="question.get('text')?.hasError('required')">
+                          El texto de la pregunta es requerido
+                        </mat-error>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline" class="question-type-field">
+                        <mat-label>Tipo de pregunta</mat-label>
+                        <mat-select formControlName="type" (selectionChange)="onTypeChange(i)">
+                          <mat-option value="text">Texto libre</mat-option>
+                          <mat-option value="radio">Opción única</mat-option>
+                          <mat-option value="checkbox">Múltiple selección</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+
+                    <!-- Options for radio, checkbox types -->
+                    <div *ngIf="question.get('type')?.value === 'radio' || question.get('type')?.value === 'checkbox'" 
+                         formArrayName="options" 
+                         class="options-container">
+                      <h4 class="options-title">
+                        <mat-icon>list</mat-icon>
+                        Opciones de respuesta
+                      </h4>
+                      
+                      <div *ngFor="let option of getOptions(i).controls; let j = index" 
+                           class="option-row">
+                        <div class="option-indicator">
+                          <mat-icon *ngIf="question.get('type')?.value === 'radio'">radio_button_unchecked</mat-icon>
+                          <mat-icon *ngIf="question.get('type')?.value === 'checkbox'">check_box_outline_blank</mat-icon>
+                        </div>
+                        <mat-form-field appearance="outline" class="option-field">
+                          <mat-label>Opción {{ j + 1 }}</mat-label>
+                          <input matInput 
+                                 [formControlName]="j" 
+                                 placeholder="Escribe una opción..."
+                                 required
+                                 maxlength="100">
+                        </mat-form-field>
+                        <button mat-icon-button 
+                                color="warn" 
+                                type="button" 
+                                (click)="removeOption(i, j)"
+                                [disabled]="getOptions(i).length <= 2"
+                                title="Eliminar opción">
+                          <mat-icon>remove_circle</mat-icon>
+                        </button>
+                      </div>
+                      
+                      <button mat-button 
+                              type="button" 
+                              color="accent" 
+                              (click)="addOption(i)"
+                              [disabled]="getOptions(i).length >= 10"
+                              class="add-option-button">
+                        <mat-icon>add</mat-icon>
+                        Añadir opción
+                      </button>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              
+              <div class="add-question-section">
+                <button mat-raised-button 
+                        type="button" 
+                        color="accent" 
+                        (click)="addQuestion()"
+                        [disabled]="questions.length >= 20"
+                        class="add-question-button">
+                  <mat-icon>add_circle</mat-icon>
+                  Añadir nueva pregunta
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <div class="step-actions">
+            <button mat-button (click)="stepper.previous()">
+              <mat-icon>arrow_back</mat-icon>
+              Anterior
+            </button>
+            <button mat-raised-button 
+                    color="primary" 
+                    (click)="stepper.next()"
+                    [disabled]="questionsForm.invalid">
+              <mat-icon>arrow_forward</mat-icon>
+              Siguiente: Vista previa
+            </button>
+          </div>
+        </div>
+      </mat-step>
+
+      <!-- Step 3: Preview -->
+      <mat-step label="Vista Previa" state="done">
+        <ng-template matStepLabel>Vista Previa</ng-template>
+        <div class="step-content">
+          <div class="step-header">
+            <mat-icon>preview</mat-icon>
+            <h3>Vista previa de tu encuesta</h3>
+            <p>Revisa cómo se verá tu encuesta antes de publicarla</p>
+          </div>
+
+          <div class="preview-container">
+            <mat-card class="preview-card">
+              <mat-card-header class="preview-header">
+                <mat-card-title>{{ basicInfoForm.get('title')?.value || 'Título de la encuesta' }}</mat-card-title>
+                <mat-card-subtitle *ngIf="basicInfoForm.get('description')?.value">
+                  {{ basicInfoForm.get('description')?.value }}
+                </mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content class="preview-content">
+                <div class="survey-info">
+                  <div class="info-item">
+                    <mat-icon>schedule</mat-icon>
+                    <span>Tiempo estimado: {{ basicInfoForm.get('estimatedDuration')?.value || 5 }} minutos</span>
+                  </div>
+                  <div class="info-item">
+                    <mat-icon>help</mat-icon>
+                    <span>{{ questions.length }} pregunta{{ questions.length !== 1 ? 's' : '' }}</span>
+                  </div>
+                </div>
+
+                <div class="preview-questions">
+                  <div *ngFor="let question of questions.controls; let i = index" class="preview-question">
+                    <h4 class="question-title">{{ i + 1 }}. {{ question.get('text')?.value }}</h4>
+                    
+                    <!-- Text input preview -->
+                    <div *ngIf="question.get('type')?.value === 'text'" class="answer-preview">
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Tu respuesta</mat-label>
+                        <textarea matInput rows="2" disabled placeholder="El usuario escribirá aquí..."></textarea>
+                      </mat-form-field>
+                    </div>
+
+                    <!-- Radio options preview -->
+                    <div *ngIf="question.get('type')?.value === 'radio'" class="answer-preview">
+                      <mat-radio-group disabled>
+                        <mat-radio-button *ngFor="let option of getOptions(i).value" [value]="option" class="radio-option">
+                          {{ option }}
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </div>
+
+                    <!-- Checkbox options preview -->
+                    <div *ngIf="question.get('type')?.value === 'checkbox'" class="answer-preview">
+                      <mat-checkbox *ngFor="let option of getOptions(i).value" disabled class="checkbox-option">
+                        {{ option }}
+                      </mat-checkbox>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button (click)="stepper.previous()">
+              <mat-icon>arrow_back</mat-icon>
+              Anterior
+            </button>
+            <button mat-button (click)="saveDraft()" color="accent" [disabled]="isLoading">
+              <mat-icon>save</mat-icon>
+              Guardar borrador
+            </button>
+            <button mat-raised-button 
+                    color="primary" 
+                    (click)="onSubmit()"
+                    [disabled]="isLoading || basicInfoForm.invalid || questionsForm.invalid">
+              <span *ngIf="!isLoading">
+                <mat-icon>publish</mat-icon>
+                Publicar encuesta
+              </span>
+              <span *ngIf="isLoading" class="loading-content">
+                <mat-spinner diameter="20"></mat-spinner>
+                Publicando...
+              </span>
+            </button>
+          </div>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </mat-card>
+</div>
