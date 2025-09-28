@@ -42,7 +42,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 // Components
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './shared/components/header/header.component';
 import { LoginComponent } from './auth/login/login.component';
 import { SurveyListComponent } from './survey/survey-list/survey-list.component';
 import { SurveyCreateComponent } from './survey/survey-create/survey-create.component';
@@ -59,7 +58,6 @@ import { SecurityInterceptor } from './core/interceptors/security.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
     LoginComponent,
     SurveyListComponent,
     SurveyCreateComponent,
