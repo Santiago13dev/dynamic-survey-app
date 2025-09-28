@@ -1,409 +1,244 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
+import { Survey, SurveyResponse, Question, SurveyStats } from '../models/survey.model';
 
-export interface Question {
-  id?: string;
-  text: string;
-  type: 'text' | 'radio' | 'checkbox' | 'scale';
-  options?: string[];
-  required?: boolean;
-  scaleMin?: number;
-  scaleMax?: number;
-}
-
-export interface Survey {
-  id: string;
-  titulo: string;
-  descripcion?: string;
-  categoria?: string;
-  duracionEstimada?: number;
-  esAnonima?: boolean;
-  permiteMultiplesRespuestas?: boolean;
-  preguntas: Question[];
-  status?: 'active' | 'draft' | 'archived';
-  fechaCreacion?: Date;
-  respuestas?: number;
-  completadas?: number;
-  autor?: string;
-  tags?: string[];
-}
-
-export interface SurveyResponse {
-  id: string;
-  surveyId: string;
-  respuestas: { questionId: string; answer: string | string[] | number }[];
-  fechaRespuesta: Date;
-  tiempoCompletado?: number;
-  usuarioId?: string;
-  ip?: string;
-}
-
-export interface SurveyStats {
-  totalRespuestas: number;
-  totalCompletadas: number;
-  promedioTiempo: number;
-  tasaComplecion: number;
-  ultimaRespuesta?: Date;
-  respuestasPorDia: { fecha: string; cantidad: number }[];
-}
-
-/**
- * Servicio mejorado para manejar encuestas con funcionalidades avanzadas
- * Incluye persistencia en localStorage, validaciones y estadísticas
- */
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class SurveyService {
-  private surveysSubject = new BehaviorSubject<Survey[]>([]);
-  private responsesSubject = new BehaviorSubject<SurveyResponse[]>([]);
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-
-  // Observables públicos
+  private readonly STORAGE_KEY = 'surveys';
+  private readonly RESPONSES_KEY = 'survey-responses';
+  
+  private surveysSubject = new BehaviorSubject<Survey[]>(this.loadSurveys());
+  private responsesSubject = new BehaviorSubject<SurveyResponse[]>(this.loadResponses());
+  
   surveys$ = this.surveysSubject.asObservable();
   responses$ = this.responsesSubject.asObservable();
-  loading$ = this.loadingSubject.asObservable();
-
-  // Claves para localStorage
-  private readonly SURVEYS_KEY = 'dynamic-surveys';
-  private readonly RESPONSES_KEY = 'dynamic-survey-responses';
-  private readonly STATS_KEY = 'dynamic-survey-stats';
 
   constructor() {
-    this.loadInitialData();
-    this.createSampleDataIfEmpty();
+    this.initializeDefaultData();
   }
 
-  /**
-   * Carga datos iniciales desde localStorage
-   */
-  private loadInitialData(): void {
-    try {
-      const surveys = localStorage.getItem(this.SURVEYS_KEY);
-      const responses = localStorage.getItem(this.RESPONSES_KEY);
-
-      if (surveys) {
-        const parsedSurveys = JSON.parse(surveys).map((survey: any) => ({
-          ...survey,
-          fechaCreacion: new Date(survey.fechaCreacion)
-        }));
-        this.surveysSubject.next(parsedSurveys);
-      }
-
-      if (responses) {
-        const parsedResponses = JSON.parse(responses).map((response: any) => ({
-          ...response,
-          fechaRespuesta: new Date(response.fechaRespuesta)
-        }));
-        this.responsesSubject.next(parsedResponses);
-      }
-    } catch (error) {
-      console.warn('Error cargando datos desde localStorage:', error);
-    }
-  }
-
-  /**
-   * Crea datos de ejemplo si no existen encuestas
-   */
-  private createSampleDataIfEmpty(): void {
-    if (this.surveysSubject.value.length === 0) {
-      const sampleSurveys: Survey[] = [
+  private initializeDefaultData(): void {
+    const surveys = this.loadSurveys();
+    if (surveys.length === 0) {
+      const defaultSurveys: Survey[] = [
         {
-          id: this.generateId(),
-          titulo: 'Encuesta de Satisfacción del Cliente',
-          descripcion: 'Ayúdanos a mejorar nuestros servicios con tu opinión',
+          id: '1',
+          titulo: 'Satisfacción del Cliente',
+          descripcion: 'Encuesta para medir la satisfacción de nuestros clientes',
           categoria: 'customer-satisfaction',
           duracionEstimada: 5,
           esAnonima: true,
           permiteMultiplesRespuestas: false,
-          status: 'active',
-          fechaCreacion: new Date(2024, 8, 15),
-          respuestas: 23,
-          completadas: 20,
           preguntas: [
             {
-              id: this.generateId(),
-              text: '¿Cómo calificarías nuestro servicio en general?',
-              type: 'radio',
+              id: '1',
+              type: 'rating',
+              text: '¿Qué tan satisfecho está con nuestro servicio?',
               required: true,
-              options: ['Excelente', 'Muy bueno', 'Bueno', 'Regular', 'Malo']
+              order: 1
             },
             {
-              id: this.generateId(),
-              text: '¿Qué aspectos podríamos mejorar?',
-              type: 'checkbox',
+              id: '2',
+              type: 'text',
+              text: '¿Qué podríamos mejorar?',
               required: false,
-              options: ['Atención al cliente', 'Tiempo de respuesta', 'Calidad del producto', 'Precios', 'Comunicación']
-            },
-            {
-              id: this.generateId(),
-              text: 'Compártenos tus comentarios adicionales',
-              type: 'text',
-              required: false
+              order: 2
             }
-          ]
-        },
-        {
-          id: this.generateId(),
-          titulo: 'Feedback de Producto Beta',
-          descripcion: 'Tu opinión sobre nuestro nuevo producto en desarrollo',
-          categoria: 'product-feedback',
-          duracionEstimada: 8,
-          esAnonima: false,
-          permiteMultiplesRespuestas: true,
+          ],
           status: 'active',
-          fechaCreacion: new Date(2024, 8, 20),
+          fechaCreacion: new Date(),
           respuestas: 15,
-          completadas: 12,
-          preguntas: [
-            {
-              id: this.generateId(),
-              text: '¿Qué tan fácil te resultó usar el producto?',
-              type: 'radio',
-              required: true,
-              options: ['Muy fácil', 'Fácil', 'Neutro', 'Difícil', 'Muy difícil']
-            },
-            {
-              id: this.generateId(),
-              text: 'Describe tu experiencia general',
-              type: 'text',
-              required: true
-            }
-          ]
-        },
-        {
-          id: this.generateId(),
-          titulo: 'Encuesta de Empleados Q3',
-          descripcion: 'Evaluación trimestral del ambiente laboral',
-          categoria: 'employee-feedback',
-          duracionEstimada: 10,
-          esAnonima: true,
-          permiteMultiplesRespuestas: false,
-          status: 'draft',
-          fechaCreacion: new Date(2024, 8, 25),
-          respuestas: 0,
-          completadas: 0,
-          preguntas: [
-            {
-              id: this.generateId(),
-              text: '¿Te sientes satisfecho con tu trabajo actual?',
-              type: 'radio',
-              required: true,
-              options: ['Muy satisfecho', 'Satisfecho', 'Neutro', 'Insatisfecho', 'Muy insatisfecho']
-            }
-          ]
+          completadas: 12
         }
       ];
-
-      this.surveysSubject.next(sampleSurveys);
-      this.persistSurveys();
+      this.saveSurveys(defaultSurveys);
+      this.surveysSubject.next(defaultSurveys);
     }
   }
 
-  /**
-   * Obtiene todas las encuestas
-   */
+  private loadSurveys(): Survey[] {
+    try {
+      const data = localStorage.getItem(this.STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Error loading surveys:', error);
+      return [];
+    }
+  }
+
+  private loadResponses(): SurveyResponse[] {
+    try {
+      const data = localStorage.getItem(this.RESPONSES_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Error loading responses:', error);
+      return [];
+    }
+  }
+
+  private saveSurveys(surveys: Survey[]): void {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(surveys));
+    } catch (error) {
+      console.error('Error saving surveys:', error);
+    }
+  }
+
+  private saveResponses(responses: SurveyResponse[]): void {
+    try {
+      localStorage.setItem(this.RESPONSES_KEY, JSON.stringify(responses));
+    } catch (error) {
+      console.error('Error saving responses:', error);
+    }
+  }
+
   getSurveys(): Observable<Survey[]> {
     return this.surveys$;
   }
 
-  /**
-   * Obtiene una encuesta por ID
-   */
   getSurvey(id: string): Observable<Survey | undefined> {
     return this.surveys$.pipe(
       map(surveys => surveys.find(survey => survey.id === id))
     );
   }
 
-  /**
-   * Añade una nueva encuesta
-   */
   addSurvey(surveyData: Omit<Survey, 'id' | 'fechaCreacion'>): Observable<Survey> {
-    this.loadingSubject.next(true);
+    const newSurvey: Survey = {
+      ...surveyData,
+      id: this.generateId(),
+      fechaCreacion: new Date()
+    };
 
-    return of(null).pipe(
-      delay(500), // Simular delay de red
-      map(() => {
-        const newSurvey: Survey = {
-          ...surveyData,
-          id: this.generateId(),
-          fechaCreacion: new Date(),
-          respuestas: 0,
-          completadas: 0,
-          status: surveyData.status || 'active'
-        };
-
-        // Asignar IDs a las preguntas si no las tienen
-        newSurvey.preguntas = newSurvey.preguntas.map(pregunta => ({
-          ...pregunta,
-          id: pregunta.id || this.generateId()
-        }));
-
-        const currentSurveys = this.surveysSubject.value;
-        const updatedSurveys = [...currentSurveys, newSurvey];
-        
-        this.surveysSubject.next(updatedSurveys);
-        this.persistSurveys();
-        this.loadingSubject.next(false);
-
-        return newSurvey;
-      })
-    );
+    const currentSurveys = this.surveysSubject.value;
+    const updatedSurveys = [...currentSurveys, newSurvey];
+    
+    this.saveSurveys(updatedSurveys);
+    this.surveysSubject.next(updatedSurveys);
+    
+    return of(newSurvey);
   }
 
-  /**
-   * Actualiza una encuesta existente
-   */
-  updateSurvey(updatedSurvey: Survey): Observable<Survey> {
-    this.loadingSubject.next(true);
-
-    return of(null).pipe(
-      delay(300),
-      map(() => {
-        const currentSurveys = this.surveysSubject.value;
-        const index = currentSurveys.findIndex(survey => survey.id === updatedSurvey.id);
-        
-        if (index === -1) {
-          throw new Error('Encuesta no encontrada');
-        }
-
-        const updatedSurveys = [...currentSurveys];
-        updatedSurveys[index] = { ...updatedSurvey };
-        
-        this.surveysSubject.next(updatedSurveys);
-        this.persistSurveys();
-        this.loadingSubject.next(false);
-
-        return updatedSurvey;
-      })
-    );
+  updateSurvey(survey: Survey): Observable<Survey> {
+    const currentSurveys = this.surveysSubject.value;
+    const index = currentSurveys.findIndex(s => s.id === survey.id);
+    
+    if (index !== -1) {
+      currentSurveys[index] = survey;
+      this.saveSurveys(currentSurveys);
+      this.surveysSubject.next([...currentSurveys]);
+    }
+    
+    return of(survey);
   }
 
-  /**
-   * Elimina una encuesta
-   */
-  deleteSurvey(surveyId: string): Observable<boolean> {
-    this.loadingSubject.next(true);
-
-    return of(null).pipe(
-      delay(300),
-      map(() => {
-        const currentSurveys = this.surveysSubject.value;
-        const updatedSurveys = currentSurveys.filter(survey => survey.id !== surveyId);
-        
-        // También eliminar respuestas asociadas
-        const currentResponses = this.responsesSubject.value;
-        const updatedResponses = currentResponses.filter(response => response.surveyId !== surveyId);
-        
-        this.surveysSubject.next(updatedSurveys);
-        this.responsesSubject.next(updatedResponses);
-        this.persistSurveys();
-        this.persistResponses();
-        this.loadingSubject.next(false);
-
-        return true;
-      })
-    );
+  deleteSurvey(id: string): Observable<boolean> {
+    const currentSurveys = this.surveysSubject.value;
+    const filteredSurveys = currentSurveys.filter(survey => survey.id !== id);
+    
+    this.saveSurveys(filteredSurveys);
+    this.surveysSubject.next(filteredSurveys);
+    
+    return of(true);
   }
 
-  /**
-   * Guarda un borrador de encuesta
-   */
-  saveDraft(draftData: any): Observable<Survey> {
-    return this.addSurvey({
-      ...draftData,
-      status: 'draft'
-    });
+  addResponse(responseData: Omit<SurveyResponse, 'id' | 'fechaRespuesta'>): Observable<SurveyResponse> {
+    const newResponse: SurveyResponse = {
+      ...responseData,
+      id: this.generateId(),
+      fechaRespuesta: new Date()
+    };
+
+    const currentResponses = this.responsesSubject.value;
+    const updatedResponses = [...currentResponses, newResponse];
+    
+    this.saveResponses(updatedResponses);
+    this.responsesSubject.next(updatedResponses);
+    
+    // Update survey response count
+    this.updateSurveyResponseCount(responseData.surveyId);
+    
+    return of(newResponse);
   }
 
-  /**
-   * Añade una respuesta a una encuesta
-   */
-  addResponse(response: Omit<SurveyResponse, 'id' | 'fechaRespuesta'>): Observable<SurveyResponse> {
-    this.loadingSubject.next(true);
-
-    return of(null).pipe(
-      delay(200),
-      map(() => {
-        const newResponse: SurveyResponse = {
-          ...response,
-          id: this.generateId(),
-          fechaRespuesta: new Date()
-        };
-
-        const currentResponses = this.responsesSubject.value;
-        const updatedResponses = [...currentResponses, newResponse];
-        
-        this.responsesSubject.next(updatedResponses);
-        this.persistResponses();
-
-        // Actualizar estadísticas de la encuesta
-        this.updateSurveyStats(response.surveyId);
-        this.loadingSubject.next(false);
-
-        return newResponse;
-      })
-    );
-  }
-
-  /**
-   * Obtiene respuestas de una encuesta específica
-   */
   getResponsesForSurvey(surveyId: string): Observable<SurveyResponse[]> {
     return this.responses$.pipe(
       map(responses => responses.filter(response => response.surveyId === surveyId))
     );
   }
 
-  /**
-   * Genera un ID único
-   */
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  getSurveyStats(surveyId: string): Observable<SurveyStats> {
+    return this.getResponsesForSurvey(surveyId).pipe(
+      map(responses => {
+        const totalResponses = responses.length;
+        const completedResponses = responses.filter(r => r.completada).length;
+        const completionRate = totalResponses > 0 ? (completedResponses / totalResponses) * 100 : 0;
+        
+        return {
+          totalResponses,
+          completedResponses,
+          averageTime: 5, // Mock data
+          completionRate
+        };
+      })
+    );
   }
 
-  /**
-   * Persiste encuestas en localStorage
-   */
-  private persistSurveys(): void {
-    try {
-      localStorage.setItem(this.SURVEYS_KEY, JSON.stringify(this.surveysSubject.value));
-    } catch (error) {
-      console.error('Error guardando encuestas:', error);
-    }
-  }
-
-  /**
-   * Persiste respuestas en localStorage
-   */
-  private persistResponses(): void {
-    try {
-      localStorage.setItem(this.RESPONSES_KEY, JSON.stringify(this.responsesSubject.value));
-    } catch (error) {
-      console.error('Error guardando respuestas:', error);
-    }
-  }
-
-  /**
-   * Actualiza las estadísticas de una encuesta
-   */
-  private updateSurveyStats(surveyId: string): void {
+  private updateSurveyResponseCount(surveyId: string): void {
     const currentSurveys = this.surveysSubject.value;
     const surveyIndex = currentSurveys.findIndex(s => s.id === surveyId);
     
     if (surveyIndex !== -1) {
-      const responses = this.responsesSubject.value.filter(r => r.surveyId === surveyId);
-      const completedResponses = responses.filter(r => r.tiempoCompletado !== undefined);
-      
-      const updatedSurveys = [...currentSurveys];
-      updatedSurveys[surveyIndex] = {
-        ...updatedSurveys[surveyIndex],
-        respuestas: responses.length,
-        completadas: completedResponses.length
-      };
-      
-      this.surveysSubject.next(updatedSurveys);
-      this.persistSurveys();
+      currentSurveys[surveyIndex].respuestas += 1;
+      this.saveSurveys(currentSurveys);
+      this.surveysSubject.next([...currentSurveys]);
     }
+  }
+
+  private generateId(): string {
+    return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+  }
+
+  // Helper methods for filtering
+  searchSurveys(term: string): Observable<Survey[]> {
+    return this.surveys$.pipe(
+      map(surveys => 
+        surveys.filter(survey => 
+          survey.titulo.toLowerCase().includes(term.toLowerCase()) ||
+          (survey.descripcion && survey.descripcion.toLowerCase().includes(term.toLowerCase()))
+        )
+      )
+    );
+  }
+
+  filterByStatus(status: string): Observable<Survey[]> {
+    return this.surveys$.pipe(
+      map(surveys => 
+        status ? surveys.filter(survey => survey.status === status) : surveys
+      )
+    );
+  }
+
+  filterSurveys(searchTerm: string, status: string): Observable<Survey[]> {
+    return this.surveys$.pipe(
+      map(surveys => {
+        let filtered = surveys;
+        
+        if (searchTerm) {
+          filtered = filtered.filter(survey => 
+            survey.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (survey.descripcion && survey.descripcion.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        }
+        
+        if (status) {
+          filtered = filtered.filter(survey => survey.status === status);
+        }
+        
+        return filtered;
+      })
+    );
   }
 }
