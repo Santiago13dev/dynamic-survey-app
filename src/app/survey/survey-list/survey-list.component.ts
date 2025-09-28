@@ -97,7 +97,7 @@ export class SurveyListComponent implements OnInit, OnDestroy {
   }
 
   // Event handlers
-  onSearchChange(): void {
+  onSearch(): void {
     this.searchControl.setValue(this.searchTerm);
   }
 
@@ -105,7 +105,7 @@ export class SurveyListComponent implements OnInit, OnDestroy {
     this.statusControl.setValue(this.selectedStatus);
   }
 
-  toggleViewMode(): void {
+  toggleView(): void {
     this.viewMode = this.viewMode === 'grid' ? 'table' : 'grid';
   }
 
@@ -194,10 +194,6 @@ export class SurveyListComponent implements OnInit, OnDestroy {
   }
 
   // Helper methods
-  private generateId(): string {
-    return Date.now().toString() + Math.random().toString(36).substr(2, 9);
-  }
-
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'active': return 'status-active';
