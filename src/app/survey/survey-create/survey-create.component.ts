@@ -13,6 +13,7 @@ import { Question, Survey } from '../../models/survey.model';
 export class SurveyCreateComponent implements OnInit {
   basicInfoForm!: FormGroup;
   questionsForm!: FormGroup;
+  isLoading = false;
   
   questionTypes = [
     { value: 'text', label: 'Texto libre' },
@@ -117,8 +118,9 @@ export class SurveyCreateComponent implements OnInit {
     return this.basicInfoForm.get('description')?.value?.length || 0;
   }
 
-  onSubmit(): void {
-    if (this.basicInfoForm.valid && this.questionsForm.valid) {
+  saveDraft(): void {
+    if (this.basicInfoForm.valid) {
+      this.isLoading = true;
       const basicInfo = this.basicInfoForm.value;
       const questionsData = this.questionsForm.value.questions;
       
@@ -146,12 +148,60 @@ export class SurveyCreateComponent implements OnInit {
 
       this.surveyService.addSurvey(surveyData).subscribe({
         next: (survey) => {
+          this.isLoading = false;
+          this.snackBar.open('Borrador guardado exitosamente', 'Cerrar', {
+            duration: 3000
+          });
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.snackBar.open('Error al guardar borrador', 'Cerrar', {
+            duration: 3000
+          });
+          console.error('Error saving draft:', error);
+        }
+      });
+    }
+  }
+
+  onSubmit(): void {
+    if (this.basicInfoForm.valid && this.questionsForm.valid) {
+      this.isLoading = true;
+      const basicInfo = this.basicInfoForm.value;
+      const questionsData = this.questionsForm.value.questions;
+      
+      const questions: Question[] = questionsData.map((q: any, index: number) => ({
+        id: (index + 1).toString(),
+        type: q.type,
+        text: q.text,
+        options: q.options || [],
+        required: q.required,
+        order: index + 1
+      }));
+
+      const surveyData = {
+        titulo: basicInfo.title,
+        descripcion: basicInfo.description,
+        categoria: basicInfo.category,
+        duracionEstimada: basicInfo.estimatedDuration,
+        esAnonima: basicInfo.isAnonymous,
+        permiteMultiplesRespuestas: basicInfo.allowMultipleResponses,
+        preguntas: questions,
+        status: 'active' as const,
+        respuestas: 0,
+        completadas: 0
+      };
+
+      this.surveyService.addSurvey(surveyData).subscribe({
+        next: (survey) => {
+          this.isLoading = false;
           this.snackBar.open('Encuesta creada exitosamente', 'Cerrar', {
             duration: 3000
           });
           this.router.navigate(['/surveys']);
         },
         error: (error) => {
+          this.isLoading = false;
           this.snackBar.open('Error al crear la encuesta', 'Cerrar', {
             duration: 3000
           });
