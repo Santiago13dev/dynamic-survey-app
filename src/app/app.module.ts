@@ -33,6 +33,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
 
 // Chart.js
 import { NgChartsModule } from 'ng2-charts';
@@ -42,16 +43,24 @@ import { AppRoutingModule } from './app-routing.module';
 
 // Components
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './shared/components/header/header.component';
 import { LoginComponent } from './auth/login/login.component';
 import { SurveyListComponent } from './survey/survey-list/survey-list.component';
 import { SurveyCreateComponent } from './survey/survey-create/survey-create.component';
 import { SurveyTakeComponent } from './survey/survey-take/survey-take.component';
 import { SurveyResultsComponent } from './survey/survey-results/survey-results.component';
+import { ThemeToggleComponent } from './shared/components/theme-toggle/theme-toggle.component';
 
 // Services
 import { SurveyService } from './services/survey.service';
 import { AuthService } from './services/auth.service';
+import { ThemeService } from './shared/services/theme.service';
+
+// Guards
+import { AuthGuard } from './shared/guards/auth.guard';
+
+// Pipes
+import { TruncatePipe } from './shared/pipes/truncate.pipe';
+import { TimeAgoPipe } from './shared/pipes/time-ago.pipe';
 
 // Interceptors
 import { SecurityInterceptor } from './core/interceptors/security.interceptor';
@@ -59,12 +68,15 @@ import { SecurityInterceptor } from './core/interceptors/security.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
     LoginComponent,
     SurveyListComponent,
     SurveyCreateComponent,
     SurveyTakeComponent,
-    SurveyResultsComponent
+    SurveyResultsComponent,
+    ThemeToggleComponent,
+    // Pipes
+    TruncatePipe,
+    TimeAgoPipe
   ],
   imports: [
     BrowserModule,
@@ -103,6 +115,7 @@ import { SecurityInterceptor } from './core/interceptors/security.interceptor';
     MatSliderModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatDividerModule,
     
     // Charts
     NgChartsModule
@@ -110,6 +123,8 @@ import { SecurityInterceptor } from './core/interceptors/security.interceptor';
   providers: [
     SurveyService,
     AuthService,
+    ThemeService,
+    AuthGuard,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SecurityInterceptor,
