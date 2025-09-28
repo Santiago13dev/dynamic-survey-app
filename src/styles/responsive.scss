@@ -1,0 +1,360 @@
+// Responsive Design System
+// Breakpoints and utilities for mobile-first responsive design
+
+// ==========================================================================
+// BREAKPOINTS
+// ==========================================================================
+
+$breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+// Mixins for responsive design
+@mixin respond-to($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: #{map-get($breakpoints, $breakpoint)}) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint: #{$breakpoint}.";
+  }
+}
+
+@mixin respond-to-max($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (max-width: #{map-get($breakpoints, $breakpoint) - 1px}) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint: #{$breakpoint}.";
+  }
+}
+
+@mixin respond-between($min-breakpoint, $max-breakpoint) {
+  @if map-has-key($breakpoints, $min-breakpoint) and map-has-key($breakpoints, $max-breakpoint) {
+    @media (min-width: #{map-get($breakpoints, $min-breakpoint)}) and (max-width: #{map-get($breakpoints, $max-breakpoint) - 1px}) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoints: #{$min-breakpoint} or #{$max-breakpoint}.";
+  }
+}
+
+// ==========================================================================
+// CONTAINER SYSTEM
+// ==========================================================================
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  
+  @include respond-to(sm) {
+    max-width: 540px;
+  }
+  
+  @include respond-to(md) {
+    max-width: 720px;
+  }
+  
+  @include respond-to(lg) {
+    max-width: 960px;
+    padding: 0 var(--spacing-lg);
+  }
+  
+  @include respond-to(xl) {
+    max-width: 1140px;
+  }
+  
+  @include respond-to(xxl) {
+    max-width: 1320px;
+  }
+}
+
+.container-fluid {
+  width: 100%;
+  padding: 0 var(--spacing-md);
+  
+  @include respond-to(lg) {
+    padding: 0 var(--spacing-lg);
+  }
+}
+
+// ==========================================================================
+// GRID SYSTEM
+// ==========================================================================
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 calc(-1 * var(--spacing-md) / 2);
+  
+  @include respond-to(lg) {
+    margin: 0 calc(-1 * var(--spacing-lg) / 2);
+  }
+}
+
+.col {
+  flex: 1 0 0%;
+  padding: 0 calc(var(--spacing-md) / 2);
+  
+  @include respond-to(lg) {
+    padding: 0 calc(var(--spacing-lg) / 2);
+  }
+}
+
+// ==========================================================================
+// RESPONSIVE UTILITIES
+// ==========================================================================
+
+// Display utilities
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+.d-grid { display: grid !important; }
+
+// Text alignment
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+
+// Flex utilities
+.flex-column { flex-direction: column !important; }
+.flex-row { flex-direction: row !important; }
+.justify-content-center { justify-content: center !important; }
+.justify-content-between { justify-content: space-between !important; }
+.align-items-center { align-items: center !important; }
+
+// ==========================================================================
+// MOBILE-SPECIFIC OPTIMIZATIONS
+// ==========================================================================
+
+// Touch targets optimization
+@include respond-to-max(md) {
+  .btn, 
+  .mat-mdc-raised-button,
+  .mat-mdc-outlined-button,
+  .mat-mdc-unelevated-button {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .mat-mdc-icon-button {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  
+  // Full-width buttons on mobile
+  .mobile-full-width {
+    width: 100% !important;
+    margin-bottom: var(--spacing-sm) !important;
+  }
+}
+
+// Form optimizations for mobile
+@include respond-to-max(md) {
+  .mat-mdc-form-field {
+    width: 100%;
+    margin-bottom: var(--spacing-md);
+    
+    .mat-mdc-text-field-wrapper {
+      min-height: 48px;
+    }
+    
+    .mat-mdc-form-field-label {
+      font-size: 1rem;
+    }
+  }
+  
+  .mat-mdc-select {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+  
+  // Adjust input padding for better touch experience
+  .mat-mdc-input-element {
+    padding: var(--spacing-md) !important;
+    font-size: 1rem !important;
+  }
+}
+
+// Card adaptations for mobile
+@include respond-to-max(md) {
+  .mat-mdc-card {
+    margin: var(--spacing-sm) 0;
+    border-radius: var(--border-radius) !important;
+    
+    .mat-mdc-card-header {
+      padding: var(--spacing-md) !important;
+      
+      .mat-mdc-card-title {
+        font-size: 1.25rem !important;
+        line-height: 1.3 !important;
+      }
+      
+      .mat-mdc-card-subtitle {
+        font-size: 0.875rem !important;
+        margin-top: var(--spacing-xs) !important;
+      }
+    }
+    
+    .mat-mdc-card-content {
+      padding: var(--spacing-md) !important;
+      font-size: 0.9rem;
+    }
+    
+    .mat-mdc-card-actions {
+      padding: var(--spacing-md) !important;
+      flex-direction: column;
+      align-items: stretch;
+      
+      .mat-mdc-button {
+        margin: 0 0 var(--spacing-xs) 0;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// TABLET OPTIMIZATIONS
+// ==========================================================================
+
+@include respond-between(md, lg) {
+  // Grid adjustments for tablets
+  .surveys-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--spacing-md) !important;
+  }
+  
+  // Stepper optimizations
+  .mat-horizontal-stepper {
+    .mat-step-header {
+      padding: var(--spacing-sm) var(--spacing-md);
+      min-height: 60px;
+      
+      .mat-step-icon {
+        margin-right: var(--spacing-sm);
+        width: 32px;
+        height: 32px;
+      }
+      
+      .mat-step-label {
+        font-size: 0.9rem;
+      }
+    }
+  }
+  
+  // Table adjustments
+  .mat-mdc-table {
+    font-size: 0.875rem;
+    
+    .mat-mdc-header-cell {
+      font-size: 0.8rem;
+      padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .mat-mdc-cell {
+      padding: var(--spacing-sm) var(--spacing-md);
+    }
+  }
+}
+
+// ==========================================================================
+// LARGE SCREEN OPTIMIZATIONS
+// ==========================================================================
+
+@include respond-to(xl) {
+  // Wider containers for large screens
+  .surveys-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  // Enhanced stepper for large screens
+  .mat-horizontal-stepper {
+    .mat-step-header {
+      padding: var(--spacing-lg);
+      min-height: 80px;
+      
+      .mat-step-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: var(--spacing-md);
+      }
+      
+      .mat-step-label {
+        font-size: 1rem;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// PRINT STYLES
+// ==========================================================================
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .mat-mdc-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    break-inside: avoid;
+  }
+  
+  .page-break {
+    page-break-before: always;
+  }
+  
+  .page-break-avoid {
+    break-inside: avoid;
+  }
+}
+
+// ==========================================================================
+// ACCESSIBILITY ENHANCEMENTS
+// ==========================================================================
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .mat-mdc-card {
+    border: 2px solid var(--text-primary) !important;
+  }
+  
+  .mat-mdc-button {
+    border: 1px solid currentColor !important;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Dark mode preparation
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #121212;
+    --surface-color: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --border-color: #333333;
+  }
+}
