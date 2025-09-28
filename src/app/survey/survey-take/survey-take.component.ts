@@ -52,13 +52,13 @@ export class SurveyTakeComponent implements OnInit {
   private initializeForm(survey: Survey): void {
     const formControls: { [key: string]: any } = {};
     
-    survey.preguntas.forEach(question => {
+    survey.preguntas.forEach((question: Question) => {
       const validators = question.required ? [Validators.required] : [];
       
       if (question.type === 'checkbox') {
         // For checkbox questions, create a FormGroup with controls for each option
         const checkboxControls: { [key: string]: any } = {};
-        question.options?.forEach((option, index) => {
+        question.options?.forEach((option: string, index: number) => {
           checkboxControls[`option_${index}`] = [false];
         });
         formControls[question.id] = this.fb.group(checkboxControls);
@@ -96,7 +96,7 @@ export class SurveyTakeComponent implements OnInit {
     if (this.responseForm.valid) {
       const answers: SurveyAnswer[] = [];
       
-      survey.preguntas.forEach(question => {
+      survey.preguntas.forEach((question: Question) => {
         const value = this.responseForm.get(question.id)?.value;
         
         if (question.type === 'checkbox') {

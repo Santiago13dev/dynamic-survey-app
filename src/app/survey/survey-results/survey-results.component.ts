@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SurveyService } from '../../services/survey.service';
-import { Survey, SurveyResponse, SurveyStats } from '../../models/survey.model';
+import { Survey, SurveyResponse, SurveyStats, Question } from '../../models/survey.model';
 
 interface QuestionResult {
   questionId: string;
@@ -64,9 +64,9 @@ export class SurveyResultsComponent implements OnInit {
   private processResults(survey: Survey, responses: SurveyResponse[]): QuestionResult[] {
     const results: QuestionResult[] = [];
     
-    survey.preguntas.forEach(question => {
+    survey.preguntas.forEach((question: Question) => {
       const questionResponses = responses
-        .map(response => response.respuestas.find(r => r.questionId === question.id))
+        .map(response => response.respuestas.find((r: any) => r.questionId === question.id))
         .filter(answer => answer !== undefined)
         .map(answer => answer!.answer);
       
