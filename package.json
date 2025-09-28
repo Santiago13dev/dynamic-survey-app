@@ -1,51 +1,75 @@
 {
   "name": "dynamic-survey-app",
   "version": "2.0.0",
-  "description": "Aplicación moderna y minimalista para crear, gestionar y analizar encuestas dinámicas",
+  "description": "Aplicación web para crear, responder y visualizar encuestas dinámicas con resultados gráficos. Desarrollado con Angular y Material Design.",
   "author": "Santiago Dev <santiago@dinamicsurveys.com>",
   "license": "MIT",
-  "keywords": [
-    "angular",
-    "survey",
-    "forms",
-    "material-design",
-    "typescript",
-    "responsive",
-    "minimalista"
-  ],
-  "homepage": "https://github.com/Santiago13dev/dynamic-survey-app",
+  "homepage": "https://github.com/Santiago13dev/dynamic-survey-app#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Santiago13dev/dynamic-survey-app.git"
+    "url": "git+https://github.com/Santiago13dev/dynamic-survey-app.git"
   },
   "bugs": {
     "url": "https://github.com/Santiago13dev/dynamic-survey-app/issues"
   },
-  "private": true,
+  "keywords": [
+    "angular",
+    "survey",
+    "encuestas",
+    "material-design",
+    "charts",
+    "analytics",
+    "pwa",
+    "responsive",
+    "typescript",
+    "rxjs",
+    "glassmorphism",
+    "dark-theme",
+    "enterprise"
+  ],
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --open",
-    "dev": "ng serve --host 0.0.0.0 --port 4200",
-    "build": "ng build --configuration production",
-    "build:dev": "ng build --configuration development",
+    "start": "ng serve",
+    "start:prod": "ng serve --configuration production",
+    "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "build:stats": "ng build --stats-json",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:watch": "ng test --watch",
     "test:coverage": "ng test --code-coverage",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
     "e2e": "ng e2e",
-    "analyze": "ng build --configuration production --stats-json && npx webpack-bundle-analyzer dist/dynamic-survey-app/stats.json",
-    "extract-i18n": "ng extract-i18n",
-    "serve:prod": "ng build --configuration production && npx http-server dist/dynamic-survey-app -p 8080",
+    "serve:sw": "ng build --configuration production && npx http-server dist/dynamic-survey-app -p 8080",
+    "analyze": "npx webpack-bundle-analyzer dist/dynamic-survey-app/stats.json",
+    "lighthouse": "lhci autorun",
+    "pwa:test": "ng build --configuration production && npx http-server dist/dynamic-survey-app -p 8080 -o",
     "format": "prettier --write \"src/**/*.{ts,html,scss,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,json}\"",
-    "clean": "rimraf dist/ node_modules/.cache/",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "precommit": "lint-staged",
     "postinstall": "ngcc"
   },
+  "private": false,
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "iOS >= 12",
+    "Android >= 8"
+  ],
   "dependencies": {
     "@angular/animations": "^17.0.0",
-    "@angular/cdk": "^17.3.7",
+    "@angular/cdk": "^17.0.0",
     "@angular/common": "^17.0.0",
     "@angular/compiler": "^17.0.0",
     "@angular/core": "^17.0.0",
@@ -56,55 +80,57 @@
     "@angular/router": "^17.0.0",
     "@angular/service-worker": "^17.0.0",
     "chart.js": "^4.4.0",
-    "file-saver": "^2.0.5",
-    "jspdf": "^2.5.1",
-    "ng2-charts": "^4.0.1",
-    "rxjs": "^7.8.1",
-    "tslib": "^2.6.0",
-    "zone.js": "~0.14.3"
+    "ng2-charts": "^5.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.14.0",
+    "lodash-es": "^4.17.21",
+    "date-fns": "^2.30.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.0.0",
     "@angular/cli": "^17.0.0",
     "@angular/compiler-cli": "^17.0.0",
-    "@angular-eslint/builder": "^17.0.0",
-    "@angular-eslint/eslint-plugin": "^17.0.0",
-    "@angular-eslint/eslint-plugin-template": "^17.0.0",
-    "@angular-eslint/schematics": "^17.0.0",
-    "@angular-eslint/template-parser": "^17.0.0",
-    "@types/file-saver": "^2.0.7",
-    "@types/jasmine": "~4.3.0",
-    "@types/node": "^20.5.9",
+    "@types/jasmine": "~5.1.0",
+    "@types/lodash-es": "^4.17.12",
+    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.50.0",
-    "jasmine-core": "~4.6.0",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-rxjs": "^5.0.3",
+    "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
-    "karma-chrome-headless": "~3.1.0",
+    "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "prettier": "^3.0.0",
-    "protractor": "~7.0.0",
-    "rimraf": "^5.0.0",
-    "typescript": "5.2.2",
-    "webpack-bundle-analyzer": "^4.9.0"
+    "standard-version": "^9.5.0",
+    "lint-staged": "^15.0.0",
+    "husky": "^8.0.0",
+    "@lhci/cli": "^0.12.0",
+    "webpack-bundle-analyzer": "^4.9.0",
+    "typescript": "~5.2.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not IE 11"
-  ],
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+  "lint-staged": {
+    "src/**/*.{ts,html,scss,json}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
-  "contributors": [
-    {
-      "name": "Santiago Dev",
-      "email": "santiago@dinamicsurveys.com",
-      "url": "https://github.com/Santiago13dev"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
-  ]
+  },
+  "standard-version": {
+    "scripts": {
+      "prebump": "npm run test:ci && npm run lint",
+      "precommit": "npm run build:prod"
+    }
+  }
 }
