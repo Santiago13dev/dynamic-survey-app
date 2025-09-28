@@ -1,0 +1,432 @@
+// Mobile-First Optimizations
+// Specific improvements for mobile user experience
+
+// ==========================================================================
+// MOBILE NAVIGATION
+// ==========================================================================
+
+@media (max-width: 767px) {
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border-color);
+    z-index: 1000;
+    padding: var(--spacing-sm) 0;
+    
+    .nav-items {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: var(--spacing-xs);
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: color var(--transition-fast);
+        
+        &.active {
+          color: var(--accent-color);
+        }
+        
+        mat-icon {
+          font-size: 1.5rem;
+          margin-bottom: 2px;
+        }
+        
+        span {
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+  
+  // Add bottom padding to prevent content being hidden behind mobile nav
+  .main-content {
+    padding-bottom: 80px;
+  }
+}
+
+// ==========================================================================
+// MOBILE FORMS
+// ==========================================================================
+
+@media (max-width: 767px) {
+  .mobile-form-optimizations {
+    .mat-mdc-form-field {
+      width: 100%;
+      margin-bottom: var(--spacing-md);
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      // Larger touch targets
+      .mat-mdc-text-field-wrapper {
+        min-height: 52px;
+        
+        .mat-mdc-form-field-input-control {
+          .mat-mdc-input-element {
+            padding: var(--spacing-md);
+            font-size: 1rem;
+            line-height: 1.5;
+          }
+        }
+      }
+      
+      // Better label positioning
+      .mat-mdc-form-field-label {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+      
+      // Improved error messages
+      .mat-mdc-form-field-error {
+        font-size: 0.875rem;
+        margin-top: var(--spacing-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        background: rgba(244, 67, 54, 0.1);
+        border-radius: var(--border-radius-small);
+        border-left: 3px solid var(--warn-color);
+      }
+      
+      // Better hint styling
+      .mat-mdc-form-field-hint {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-top: var(--spacing-xs);
+      }
+    }
+    
+    // Select field optimizations
+    .mat-mdc-select {
+      min-height: 52px;
+      font-size: 1rem;
+      
+      .mat-mdc-select-trigger {
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+      }
+    }
+    
+    // Checkbox and radio optimizations
+    .mat-mdc-checkbox,
+    .mat-mdc-radio-button {
+      margin-bottom: var(--spacing-md);
+      
+      .mdc-checkbox,
+      .mdc-radio {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .mat-mdc-checkbox-label,
+      .mat-mdc-radio-label {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-left: var(--spacing-sm);
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// MOBILE TABLES
+// ==========================================================================
+
+@media (max-width: 767px) {
+  .mobile-table {
+    .mat-mdc-table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+      
+      .mat-mdc-header-row,
+      .mat-mdc-row {
+        display: flex;
+        min-width: 600px; // Ensure minimum width for horizontal scroll
+      }
+      
+      .mat-mdc-header-cell,
+      .mat-mdc-cell {
+        flex: 1;
+        padding: var(--spacing-sm);
+        
+        &:first-child {
+          flex: 0 0 100px;
+        }
+        
+        &:last-child {
+          flex: 0 0 120px;
+        }
+      }
+      
+      // Hide less important columns on mobile
+      .hide-mobile {
+        display: none;
+      }
+    }
+  }
+  
+  // Alternative: Card-based table for mobile
+  .mobile-card-table {
+    .table-row-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-light);
+      margin-bottom: var(--spacing-md);
+      padding: var(--spacing-md);
+      
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-sm);
+        
+        .title {
+          font-weight: 600;
+          color: var(--text-primary);
+        }
+        
+        .status {
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+      }
+      
+      .card-content {
+        .info-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: var(--spacing-xs);
+          
+          .label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+          }
+          
+          .value {
+            color: var(--text-primary);
+            font-weight: 500;
+          }
+        }
+      }
+      
+      .card-actions {
+        display: flex;
+        gap: var(--spacing-xs);
+        margin-top: var(--spacing-md);
+        
+        .mat-mdc-button {
+          flex: 1;
+          min-height: 40px;
+        }
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// MOBILE CARDS
+// ==========================================================================
+
+@media (max-width: 767px) {
+  .mobile-card-optimizations {
+    .mat-mdc-card {
+      margin: var(--spacing-sm) var(--spacing-xs);
+      border-radius: var(--border-radius);
+      
+      .mat-mdc-card-header {
+        padding: var(--spacing-md);
+        
+        .mat-mdc-card-title {
+          font-size: 1.125rem;
+          line-height: 1.4;
+          margin-bottom: var(--spacing-xs);
+        }
+        
+        .mat-mdc-card-subtitle {
+          font-size: 0.875rem;
+          line-height: 1.4;
+          color: var(--text-secondary);
+        }
+      }
+      
+      .mat-mdc-card-content {
+        padding: 0 var(--spacing-md) var(--spacing-md);
+        
+        p {
+          line-height: 1.6;
+          margin-bottom: var(--spacing-sm);
+        }
+      }
+      
+      .mat-mdc-card-actions {
+        padding: var(--spacing-md);
+        flex-direction: column;
+        gap: var(--spacing-xs);
+        
+        .mat-mdc-button {
+          width: 100%;
+          min-height: 44px;
+          justify-content: center;
+        }
+        
+        .primary-action {
+          order: -1;
+        }
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// MOBILE DIALOGS
+// ==========================================================================
+
+@media (max-width: 767px) {
+  .cdk-overlay-container {
+    .mat-mdc-dialog-container {
+      margin: var(--spacing-md);
+      max-height: calc(100vh - 2 * var(--spacing-md));
+      
+      .mat-mdc-dialog-surface {
+        border-radius: var(--border-radius-large);
+        
+        .mat-mdc-dialog-title {
+          font-size: 1.25rem;
+          padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+        }
+        
+        .mat-mdc-dialog-content {
+          padding: 0 var(--spacing-lg);
+          max-height: calc(100vh - 200px);
+          overflow-y: auto;
+        }
+        
+        .mat-mdc-dialog-actions {
+          padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+          flex-direction: column-reverse;
+          gap: var(--spacing-sm);
+          
+          .mat-mdc-button {
+            width: 100%;
+            min-height: 44px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// MOBILE STEPPERS
+// ==========================================================================
+
+@media (max-width: 767px) {
+  .mat-horizontal-stepper {
+    .mat-step-header {
+      padding: var(--spacing-sm);
+      min-height: 60px;
+      
+      .mat-step-icon {
+        width: 28px;
+        height: 28px;
+        margin-right: var(--spacing-sm);
+      }
+      
+      .mat-step-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        
+        .mat-step-text-label {
+          display: none; // Hide text labels on mobile, keep only icons
+        }
+      }
+    }
+    
+    .mat-step-content {
+      padding: var(--spacing-md) var(--spacing-sm);
+      
+      .step-actions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-lg);
+        
+        .mat-mdc-button {
+          width: 100%;
+          min-height: 48px;
+          order: 1;
+          
+          &.mat-mdc-raised-button {
+            order: 0; // Primary buttons first
+          }
+        }
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// MOBILE FAB POSITIONING
+// ==========================================================================
+
+@media (max-width: 767px) {
+  .mat-mdc-fab {
+    position: fixed;
+    bottom: 80px; // Above mobile navigation
+    right: var(--spacing-md);
+    z-index: 999;
+    
+    &.fab-mini {
+      width: 48px;
+      height: 48px;
+      
+      .mat-icon {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// MOBILE ACCESSIBILITY
+// ==========================================================================
+
+@media (max-width: 767px) {
+  // Larger touch targets for accessibility
+  .a11y-mobile {
+    .clickable {
+      min-height: 44px;
+      min-width: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    // Better focus indicators
+    .mat-mdc-button:focus,
+    .mat-mdc-icon-button:focus {
+      outline: 2px solid var(--accent-color);
+      outline-offset: 2px;
+    }
+    
+    // High contrast text
+    .high-contrast-text {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+  }
+}

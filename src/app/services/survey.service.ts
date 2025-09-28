@@ -356,118 +356,10 @@ export class SurveyService {
   }
 
   /**
-   * Obtiene estadísticas de una encuesta
+   * Genera un ID único
    */
-  getSurveyStats(surveyId: string): Observable<SurveyStats> {
-    return this.getResponsesForSurvey(surveyId).pipe(
-      map(responses => {
-        const completedResponses = responses.filter(r => r.tiempoCompletado !== undefined);
-        const avgTime = completedResponses.length > 0 
-          ? completedResponses.reduce((sum, r) => sum + (r.tiempoCompletado || 0), 0) / completedResponses.length
-          : 0;
-
-        const responsesByDay = this.groupResponsesByDay(responses);
-        
-        return {
-          totalRespuestas: responses.length,
-          totalCompletadas: completedResponses.length,
-          promedioTiempo: Math.round(avgTime),
-          tasaComplecion: responses.length > 0 ? (completedResponses.length / responses.length) * 100 : 0,
-          ultimaRespuesta: responses.length > 0 ? responses[responses.length - 1].fechaRespuesta : undefined,
-          respuestasPorDia: responsesByDay
-        };
-      })
-    );
-  }
-
-  /**
-   * Busca encuestas por término
-   */
-  searchSurveys(term: string): Observable<Survey[]> {
-    return this.surveys$.pipe(
-      map(surveys => {
-        if (!term.trim()) return surveys;
-        
-        const searchTerm = term.toLowerCase().trim();
-        return surveys.filter(survey => 
-          survey.titulo.toLowerCase().includes(searchTerm) ||
-          (survey.descripcion && survey.descripcion.toLowerCase().includes(searchTerm)) ||
-          (survey.categoria && survey.categoria.toLowerCase().includes(searchTerm))
-        );
-      })
-    );
-  }
-
-  /**
-   * Filtra encuestas por estado
-   */
-  filterSurveysByStatus(status: string): Observable<Survey[]> {
-    return this.surveys$.pipe(
-      map(surveys => {
-        if (!status) return surveys;
-        return surveys.filter(survey => (survey.status || 'active') === status);
-      })
-    );
-  }
-
-  /**
-   * Exporta datos de encuesta para análisis
-   */
-  exportSurveyData(surveyId: string): Observable<any> {
-    return this.getSurvey(surveyId).pipe(
-      map(survey => {
-        if (!survey) throw new Error('Encuesta no encontrada');
-        
-        const responses = this.responsesSubject.value.filter(r => r.surveyId === surveyId);
-        
-        return {
-          survey,
-          responses,
-          exportDate: new Date(),
-          totalResponses: responses.length
-        };
-      })
-    );
-  }
-
-  // Métodos privados
-
-  /**
-   * Actualiza las estadísticas de una encuesta
-   */
-  private updateSurveyStats(surveyId: string): void {
-    const currentSurveys = this.surveysSubject.value;
-    const surveyIndex = currentSurveys.findIndex(s => s.id === surveyId);
-    
-    if (surveyIndex !== -1) {
-      const responses = this.responsesSubject.value.filter(r => r.surveyId === surveyId);
-      const completedResponses = responses.filter(r => r.tiempoCompletado !== undefined);
-      
-      const updatedSurveys = [...currentSurveys];
-      updatedSurveys[surveyIndex] = {
-        ...updatedSurveys[surveyIndex],
-        respuestas: responses.length,
-        completadas: completedResponses.length
-      };
-      
-      this.surveysSubject.next(updatedSurveys);
-      this.persistSurveys();
-    }
-  }
-
-  /**
-   * Agrupa respuestas por día
-   */
-  private groupResponsesByDay(responses: SurveyResponse[]): { fecha: string; cantidad: number }[] {
-    const grouped = responses.reduce((acc, response) => {
-      const dateKey = response.fechaRespuesta.toISOString().split('T')[0];
-      acc[dateKey] = (acc[dateKey] || 0) + 1;
-      return acc;
-    }, {} as { [key: string]: number });
-
-    return Object.entries(grouped)
-      .map(([fecha, cantidad]) => ({ fecha, cantidad }))
-      .sort((a, b) => a.fecha.localeCompare(b.fecha));
+  private generateId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 
   /**
@@ -493,72 +385,25 @@ export class SurveyService {
   }
 
   /**
-   * Genera un ID único
+   * Actualiza las estadísticas de una encuesta
    */
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  /**
-   * Valida los datos de una encuesta
-   */
-  private validateSurvey(survey: Partial<Survey>): boolean {
-    if (!survey.titulo || survey.titulo.trim().length < 3) {
-      return false;
-    }
+  private updateSurveyStats(surveyId: string): void {
+    const currentSurveys = this.surveysSubject.value;
+    const surveyIndex = currentSurveys.findIndex(s => s.id === surveyId);
     
-    if (!survey.preguntas || survey.preguntas.length === 0) {
-      return false;
+    if (surveyIndex !== -1) {
+      const responses = this.responsesSubject.value.filter(r => r.surveyId === surveyId);
+      const completedResponses = responses.filter(r => r.tiempoCompletado !== undefined);
+      
+      const updatedSurveys = [...currentSurveys];
+      updatedSurveys[surveyIndex] = {
+        ...updatedSurveys[surveyIndex],
+        respuestas: responses.length,
+        completadas: completedResponses.length
+      };
+      
+      this.surveysSubject.next(updatedSurveys);
+      this.persistSurveys();
     }
-
-    return survey.preguntas.every(pregunta => 
-      pregunta.text && pregunta.text.trim().length > 0 && pregunta.type
-    );
-  }
-
-  /**
-   * Limpia datos antiguos (mantener solo últimos 30 días)
-   */
-  cleanOldData(): void {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const currentResponses = this.responsesSubject.value;
-    const filteredResponses = currentResponses.filter(
-      response => response.fechaRespuesta > thirtyDaysAgo
-    );
-
-    if (filteredResponses.length !== currentResponses.length) {
-      this.responsesSubject.next(filteredResponses);
-      this.persistResponses();
-    }
-  }
-
-  /**
-   * Obtiene métricas generales del sistema
-   */
-  getSystemMetrics(): Observable<any> {
-    return this.surveys$.pipe(
-      map(surveys => {
-        const responses = this.responsesSubject.value;
-        const activeSurveys = surveys.filter(s => s.status === 'active');
-        const totalResponses = responses.length;
-        const avgResponseTime = responses.length > 0 
-          ? responses.reduce((sum, r) => sum + (r.tiempoCompletado || 0), 0) / responses.length
-          : 0;
-
-        return {
-          totalSurveys: surveys.length,
-          activeSurveys: activeSurveys.length,
-          totalResponses,
-          averageResponseTime: Math.round(avgResponseTime),
-          surveysCreatedThisMonth: surveys.filter(s => {
-            const thisMonth = new Date();
-            thisMonth.setDate(1);
-            return s.fechaCreacion && s.fechaCreacion >= thisMonth;
-          }).length
-        };
-      })
-    );
   }
 }

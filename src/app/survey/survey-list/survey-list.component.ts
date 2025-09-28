@@ -193,28 +193,18 @@ export class SurveyListComponent implements OnInit, OnDestroy {
    * Delete survey with confirmation
    */
   deleteSurvey(survey: Survey): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: {
-        title: 'Confirmar eliminación',
-        message: `¿Estás seguro de que deseas eliminar la encuesta "${survey.titulo}"?`,
-        confirmText: 'Eliminar',
-        cancelText: 'Cancelar'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.surveyService.deleteSurvey(survey.id).subscribe({
-          next: () => {
-            this.showSuccessMessage('Encuesta eliminada exitosamente');
-          },
-          error: () => {
-            this.showErrorMessage('Error al eliminar la encuesta');
-          }
-        });
-      }
-    });
+    const confirmed = confirm(`¿Estás seguro de que deseas eliminar la encuesta "${survey.titulo}"?`);
+    
+    if (confirmed) {
+      this.surveyService.deleteSurvey(survey.id).subscribe({
+        next: () => {
+          this.showSuccessMessage('Encuesta eliminada exitosamente');
+        },
+        error: () => {
+          this.showErrorMessage('Error al eliminar la encuesta');
+        }
+      });
+    }
   }
 
   /**
@@ -246,37 +236,5 @@ export class SurveyListComponent implements OnInit, OnDestroy {
       horizontalPosition: 'center',
       verticalPosition: 'bottom'
     });
-  }
-}
-
-// Confirmation Dialog Component (temporal implementation)
-import { Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-
-@Component({
-  selector: 'app-confirm-dialog',
-  template: `
-    <h2 mat-dialog-title>{{ data.title }}</h2>
-    <mat-dialog-content>
-      <p>{{ data.message }}</p>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">{{ data.cancelText }}</button>
-      <button mat-raised-button color="warn" (click)="onConfirm()">{{ data.confirmText }}</button>
-    </mat-dialog-actions>
-  `
-})
-export class ConfirmDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
-
-  onConfirm(): void {
-    this.dialogRef.close(true);
-  }
-
-  onCancel(): void {
-    this.dialogRef.close(false);
   }
 }

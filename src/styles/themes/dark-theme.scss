@@ -1,0 +1,549 @@
+// Dark Theme Variables and Styles
+// Comprehensive dark theme implementation for Dynamic Survey App
+
+// ==========================================================================
+// DARK THEME VARIABLES
+// ==========================================================================
+
+.dark-theme {
+  // Background Colors
+  --background-primary: #121212;
+  --background-secondary: #1e1e1e;
+  --background-tertiary: #2d2d2d;
+  --surface-primary: #1e1e1e;
+  --surface-secondary: #2d2d2d;
+  --surface-tertiary: #3a3a3a;
+  --surface-elevated: #252525;
+  
+  // Text Colors
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --text-tertiary: #8a8a8a;
+  --text-disabled: #666666;
+  --text-inverse: #121212;
+  
+  // Border Colors
+  --border-primary: #333333;
+  --border-secondary: #404040;
+  --border-tertiary: #4a4a4a;
+  --border-focus: #1976d2;
+  
+  // Shadow Colors
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-strong: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-color: rgba(0, 0, 0, 0.6);
+  
+  // Overlay Colors
+  --overlay-light: rgba(0, 0, 0, 0.4);
+  --overlay-medium: rgba(0, 0, 0, 0.6);
+  --overlay-strong: rgba(0, 0, 0, 0.8);
+  
+  // Status Colors (adjusted for dark theme)
+  --success-color: #4caf50;
+  --success-light: rgba(76, 175, 80, 0.2);
+  --warning-color: #ff9800;
+  --warning-light: rgba(255, 152, 0, 0.2);
+  --error-color: #f44336;
+  --error-light: rgba(244, 67, 54, 0.2);
+  --info-color: #2196f3;
+  --info-light: rgba(33, 150, 243, 0.2);
+  
+  // Accent Colors (darker variations)
+  --accent-50: #e3f2fd;
+  --accent-100: #bbdefb;
+  --accent-200: #90caf9;
+  --accent-300: #64b5f6;
+  --accent-400: #42a5f5;
+  --accent-500: #2196f3;
+  --accent-600: #1e88e5;
+  --accent-700: #1976d2;
+  --accent-800: #1565c0;
+  --accent-900: #0d47a1;
+  
+  // Chart Colors (optimized for dark backgrounds)
+  --chart-primary: #64b5f6;
+  --chart-secondary: #81c784;
+  --chart-tertiary: #ffb74d;
+  --chart-quaternary: #f06292;
+  --chart-quinary: #9575cd;
+}
+
+// ==========================================================================
+// COMPONENT OVERRIDES FOR DARK THEME
+// ==========================================================================
+
+.dark-theme {
+  // Global body styles
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  
+  // Material Design Component Overrides
+  .mat-mdc-card {
+    background-color: var(--surface-primary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-primary) !important;
+    
+    .mat-mdc-card-header {
+      .mat-mdc-card-title {
+        color: var(--text-primary) !important;
+      }
+      
+      .mat-mdc-card-subtitle {
+        color: var(--text-secondary) !important;
+      }
+    }
+  }
+  
+  // Toolbar
+  .mat-mdc-toolbar {
+    background-color: var(--surface-elevated) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-primary) !important;
+  }
+  
+  // Form Fields
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      background-color: var(--surface-secondary) !important;
+      
+      &.mdc-text-field--focused {
+        background-color: var(--surface-tertiary) !important;
+      }
+    }
+    
+    .mat-mdc-form-field-label {
+      color: var(--text-secondary) !important;
+    }
+    
+    .mat-mdc-input-element {
+      color: var(--text-primary) !important;
+      caret-color: var(--accent-color) !important;
+    }
+    
+    .mat-mdc-form-field-error {
+      color: var(--error-color) !important;
+    }
+    
+    .mat-mdc-form-field-hint {
+      color: var(--text-tertiary) !important;
+    }
+  }
+  
+  // Buttons
+  .mat-mdc-raised-button {
+    &.mat-primary {
+      background-color: var(--accent-color) !important;
+      color: white !important;
+    }
+    
+    &.mat-accent {
+      background-color: var(--accent-600) !important;
+      color: white !important;
+    }
+    
+    &.mat-warn {
+      background-color: var(--error-color) !important;
+      color: white !important;
+    }
+  }
+  
+  .mat-mdc-outlined-button {
+    border-color: var(--border-secondary) !important;
+    color: var(--text-primary) !important;
+    
+    &:hover {
+      background-color: var(--surface-secondary) !important;
+    }
+  }
+  
+  .mat-mdc-icon-button {
+    color: var(--text-secondary) !important;
+    
+    &:hover {
+      background-color: var(--surface-secondary) !important;
+    }
+  }
+  
+  // Tables
+  .mat-mdc-table {
+    background-color: var(--surface-primary) !important;
+    
+    .mat-mdc-header-cell {
+      background-color: var(--surface-secondary) !important;
+      color: var(--text-primary) !important;
+      border-bottom: 1px solid var(--border-primary) !important;
+    }
+    
+    .mat-mdc-cell {
+      color: var(--text-primary) !important;
+      border-bottom: 1px solid var(--border-primary) !important;
+    }
+    
+    .mat-mdc-row {
+      &:hover {
+        background-color: var(--surface-secondary) !important;
+      }
+    }
+  }
+  
+  // Dialogs
+  .mat-mdc-dialog-container {
+    .mat-mdc-dialog-surface {
+      background-color: var(--surface-primary) !important;
+      color: var(--text-primary) !important;
+    }
+  }
+  
+  // Snack Bar
+  .mat-mdc-snack-bar-container {
+    background-color: var(--surface-elevated) !important;
+    color: var(--text-primary) !important;
+    
+    &.success-snackbar {
+      background-color: var(--success-color) !important;
+    }
+    
+    &.error-snackbar {
+      background-color: var(--error-color) !important;
+    }
+  }
+  
+  // Menu
+  .mat-mdc-menu-panel {
+    background-color: var(--surface-elevated) !important;
+    
+    .mat-mdc-menu-item {
+      color: var(--text-primary) !important;
+      
+      &:hover {
+        background-color: var(--surface-secondary) !important;
+      }
+      
+      &.delete-option {
+        color: var(--error-color) !important;
+      }
+    }
+  }
+  
+  // Tabs
+  .mat-mdc-tab-group {
+    .mat-mdc-tab-header {
+      background-color: var(--surface-primary) !important;
+      border-bottom: 1px solid var(--border-primary) !important;
+    }
+    
+    .mat-mdc-tab {
+      color: var(--text-secondary) !important;
+      
+      &.mdc-tab--active {
+        color: var(--accent-color) !important;
+      }
+    }
+    
+    .mat-mdc-tab-body-content {
+      background-color: var(--background-primary) !important;
+    }
+  }
+  
+  // Stepper
+  .mat-stepper-horizontal {
+    background-color: var(--surface-primary) !important;
+    
+    .mat-step-header {
+      .mat-step-icon {
+        background-color: var(--surface-secondary) !important;
+        color: var(--text-primary) !important;
+        
+        &.mat-step-icon-selected {
+          background-color: var(--accent-color) !important;
+        }
+      }
+      
+      .mat-step-label {
+        color: var(--text-primary) !important;
+        
+        &.mat-step-label-selected {
+          color: var(--accent-color) !important;
+        }
+      }
+    }
+  }
+  
+  // Progress Spinner
+  .mat-mdc-progress-spinner {
+    circle {
+      stroke: var(--accent-color) !important;
+    }
+  }
+  
+  // Checkbox
+  .mat-mdc-checkbox {
+    .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate) ~ .mdc-checkbox__background {
+      border-color: var(--text-secondary) !important;
+    }
+  }
+  
+  // Radio Button
+  .mat-mdc-radio-button {
+    .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
+      border-color: var(--text-secondary) !important;
+    }
+  }
+  
+  // Select
+  .mat-mdc-select {
+    .mat-mdc-select-value {
+      color: var(--text-primary) !important;
+    }
+    
+    .mat-mdc-select-arrow {
+      color: var(--text-secondary) !important;
+    }
+  }
+  
+  .mat-mdc-select-panel {
+    background-color: var(--surface-elevated) !important;
+    
+    .mat-mdc-option {
+      color: var(--text-primary) !important;
+      
+      &:hover {
+        background-color: var(--surface-secondary) !important;
+      }
+      
+      &.mdc-list-item--selected {
+        background-color: var(--accent-light) !important;
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// CUSTOM COMPONENT STYLES FOR DARK THEME
+// ==========================================================================
+
+.dark-theme {
+  // Survey Cards
+  .survey-card {
+    background: var(--surface-primary) !important;
+    border: 1px solid var(--border-primary) !important;
+    
+    &:hover {
+      border-color: var(--border-secondary) !important;
+      box-shadow: var(--shadow-medium) !important;
+    }
+    
+    &.draft {
+      border-left-color: var(--warning-color) !important;
+      background: linear-gradient(90deg, var(--warning-light) 0%, var(--surface-primary) 10%) !important;
+    }
+  }
+  
+  // Analytics Cards
+  .stats-card {
+    background: var(--surface-primary) !important;
+    border: 1px solid var(--border-primary) !important;
+    
+    .stats-value {
+      color: var(--text-primary) !important;
+    }
+    
+    .stats-label {
+      color: var(--text-secondary) !important;
+    }
+  }
+  
+  // Empty States
+  .empty-state {
+    color: var(--text-secondary) !important;
+    
+    h3 {
+      color: var(--text-primary) !important;
+    }
+    
+    .empty-illustration mat-icon {
+      color: var(--border-secondary) !important;
+    }
+  }
+  
+  // Login Component
+  .login-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+    
+    .login-card {
+      background: rgba(30, 30, 30, 0.95) !important;
+      border: 1px solid var(--border-primary) !important;
+    }
+    
+    .login-features .feature-item {
+      color: var(--text-primary) !important;
+      opacity: 0.9;
+    }
+  }
+  
+  // Chart Containers
+  .chart-card {
+    background: var(--surface-primary) !important;
+    border: 1px solid var(--border-primary) !important;
+    
+    canvas {
+      background: transparent !important;
+    }
+  }
+  
+  // Filters Section
+  .filters-card {
+    background: var(--surface-primary) !important;
+    border: 1px solid var(--border-primary) !important;
+  }
+  
+  // Page Headers
+  .page-header {
+    .page-title {
+      color: var(--text-primary) !important;
+    }
+    
+    .page-subtitle {
+      color: var(--text-secondary) !important;
+    }
+  }
+  
+  // Status Badges
+  .status-badge {
+    &.active {
+      background: var(--success-light) !important;
+      color: var(--success-color) !important;
+    }
+    
+    &.draft {
+      background: var(--warning-light) !important;
+      color: var(--warning-color) !important;
+    }
+    
+    &.archived {
+      background: rgba(158, 158, 158, 0.2) !important;
+      color: var(--text-secondary) !important;
+    }
+  }
+  
+  // Loading Overlay
+  .loading-overlay {
+    background: var(--overlay-medium) !important;
+    color: var(--text-primary) !important;
+  }
+  
+  // Scrollbars (Webkit)
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--surface-secondary);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-secondary);
+    border-radius: 4px;
+    
+    &:hover {
+      background: var(--border-tertiary);
+    }
+  }
+  
+  // Selection
+  ::selection {
+    background: var(--accent-color);
+    color: white;
+  }
+  
+  ::-moz-selection {
+    background: var(--accent-color);
+    color: white;
+  }
+}
+
+// ==========================================================================
+// DARK THEME ANIMATIONS
+// ==========================================================================
+
+.dark-theme {
+  // Smooth transitions for theme switching
+  * {
+    transition: background-color 0.3s ease, 
+                border-color 0.3s ease, 
+                color 0.3s ease,
+                box-shadow 0.3s ease;
+  }
+  
+  // Glow effects for interactive elements
+  .mat-mdc-raised-button:hover,
+  .mat-mdc-fab:hover {
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.3) !important;
+  }
+  
+  // Focus indicators
+  .mat-mdc-button:focus-visible,
+  .mat-mdc-icon-button:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+}
+
+// ==========================================================================
+// CHART.JS DARK THEME OVERRIDES
+// ==========================================================================
+
+.dark-theme {
+  .chart-widget canvas {
+    filter: brightness(1.1) contrast(1.1);
+  }
+  
+  // Override Chart.js default colors for dark theme
+  .chartjs-render-monitor {
+    background: transparent !important;
+  }
+}
+
+// ==========================================================================
+// RESPONSIVE DARK THEME ADJUSTMENTS
+// ==========================================================================
+
+@media (max-width: 768px) {
+  .dark-theme {
+    // Increase contrast on mobile for better visibility
+    --text-secondary: #c0c0c0;
+    --border-primary: #404040;
+    
+    // Adjust card padding for mobile
+    .mat-mdc-card {
+      .mat-mdc-card-content {
+        padding: var(--spacing-md) !important;
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// HIGH CONTRAST MODE SUPPORT
+// ==========================================================================
+
+@media (prefers-contrast: high) {
+  .dark-theme {
+    --text-primary: #ffffff;
+    --text-secondary: #ffffff;
+    --border-primary: #ffffff;
+    --background-primary: #000000;
+    --surface-primary: #000000;
+    
+    .mat-mdc-card {
+      border: 2px solid white !important;
+    }
+    
+    .mat-mdc-button {
+      border: 1px solid white !important;
+    }
+  }
+}

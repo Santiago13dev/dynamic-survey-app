@@ -186,29 +186,6 @@ npm run analyze          # Análisis del bundle
 npm run extract-i18n     # Extracción de textos para i18n
 ```
 
-## 🎯 Roadmap
-
-### Versión 2.0 (Próximamente)
-- [ ] **Tema oscuro** completo
-- [ ] **Analíticas avanzadas** con Dashboard
-- [ ] **Exportación real** PDF/Excel
-- [ ] **Plantillas** de encuestas predefinidas
-- [ ] **Colaboración** multi-usuario
-
-### Versión 2.1
-- [ ] **API Backend** real
-- [ ] **Autenticación JWT**
-- [ ] **Notificaciones push**
-- [ ] **PWA** completa
-- [ ] **Tests E2E** con Cypress
-
-### Versión 3.0
-- [ ] **Inteligencia artificial** para análisis
-- [ ] **A/B Testing** de encuestas
-- [ ] **Integraciones** con CRM
-- [ ] **Versioning** de encuestas
-- [ ] **API pública** para desarrolladores
-
 ## 🤝 Contribuir
 
 Las contribuciones son bienvenidas. Para contribuir:
@@ -239,7 +216,7 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 ## 👨‍💻 Autor
 
 **Santiago Dev**
-- GitHub: [@SantiagoDev](https://github.com/SantiagoDev)
+- GitHub: [@Santiago13dev](https://github.com/Santiago13dev)
 - Email: santiago@dinamicsurveys.com
 
 ## 🙏 Agradecimientos
