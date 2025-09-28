@@ -1,16 +1,96 @@
-<mat-card class="login-card">
-  <h1>Iniciar sesión</h1>
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Usuario</mat-label>
-      <input matInput formControlName="username" required>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Contraseña</mat-label>
-      <input matInput type="password" formControlName="password" required>
-    </mat-form-field>
-    <button mat-raised-button color="primary" class="full-width" type="submit">
-      Entrar
-    </button>
-  </form>
-</mat-card>
+<div class="login-container">
+  <div class="login-wrapper slide-up">
+    <div class="login-header">
+      <mat-icon class="login-icon">poll</mat-icon>
+      <h1 class="login-title">Bienvenido</h1>
+      <p class="login-subtitle">Inicia sesión para acceder a tus encuestas</p>
+    </div>
+
+    <mat-card class="login-card elevation-2">
+      <mat-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Usuario</mat-label>
+              <input 
+                matInput 
+                formControlName="username" 
+                required
+                autocomplete="username"
+                placeholder="Ingresa tu usuario">
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+                El usuario es requerido
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Contraseña</mat-label>
+              <input 
+                matInput 
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password" 
+                required
+                autocomplete="current-password"
+                placeholder="Ingresa tu contraseña">
+              <button 
+                mat-icon-button 
+                matSuffix 
+                type="button"
+                (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="'Mostrar contraseña'"
+                [attr.aria-pressed]="!hidePassword">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                La contraseña es requerida
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              class="login-button full-width" 
+              type="submit"
+              [disabled]="loginForm.invalid || isLoading">
+              <span *ngIf="!isLoading">
+                <mat-icon>login</mat-icon>
+                Iniciar sesión
+              </span>
+              <span *ngIf="isLoading" class="loading-content">
+                <mat-spinner diameter="20"></mat-spinner>
+                Iniciando sesión...
+              </span>
+            </button>
+          </div>
+
+          <div class="form-footer">
+            <p class="demo-info">
+              <mat-icon>info</mat-icon>
+              Demo: usuario <strong>admin</strong>, contraseña <strong>admin</strong>
+            </p>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="login-features">
+      <div class="feature-item">
+        <mat-icon>create</mat-icon>
+        <span>Crea encuestas dinámicas</span>
+      </div>
+      <div class="feature-item">
+        <mat-icon>analytics</mat-icon>
+        <span>Analiza resultados en tiempo real</span>
+      </div>
+      <div class="feature-item">
+        <mat-icon>share</mat-icon>
+        <span>Comparte fácilmente</span>
+      </div>
+    </div>
+  </div>
+</div>
