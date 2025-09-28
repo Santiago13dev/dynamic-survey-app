@@ -4,69 +4,15 @@
   "description": "Aplicación web para crear, responder y visualizar encuestas dinámicas con resultados gráficos. Desarrollado con Angular y Material Design.",
   "author": "Santiago Dev <santiago@dinamicsurveys.com>",
   "license": "MIT",
-  "homepage": "https://github.com/Santiago13dev/dynamic-survey-app#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Santiago13dev/dynamic-survey-app.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Santiago13dev/dynamic-survey-app/issues"
-  },
-  "keywords": [
-    "angular",
-    "survey",
-    "encuestas",
-    "material-design",
-    "charts",
-    "analytics",
-    "pwa",
-    "responsive",
-    "typescript",
-    "rxjs",
-    "glassmorphism",
-    "dark-theme",
-    "enterprise"
-  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:prod": "ng serve --configuration production",
     "build": "ng build",
-    "build:prod": "ng build --configuration production",
-    "build:stats": "ng build --stats-json",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:watch": "ng test --watch",
-    "test:coverage": "ng test --code-coverage",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
-    "lint": "ng lint",
-    "lint:fix": "ng lint --fix",
-    "e2e": "ng e2e",
-    "serve:sw": "ng build --configuration production && npx http-server dist/dynamic-survey-app -p 8080",
-    "analyze": "npx webpack-bundle-analyzer dist/dynamic-survey-app/stats.json",
-    "lighthouse": "lhci autorun",
-    "pwa:test": "ng build --configuration production && npx http-server dist/dynamic-survey-app -p 8080 -o",
-    "format": "prettier --write \"src/**/*.{ts,html,scss,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,html,scss,json}\"",
-    "release": "standard-version",
-    "release:minor": "standard-version --release-as minor",
-    "release:major": "standard-version --release-as major",
-    "precommit": "lint-staged",
-    "postinstall": "ngcc"
+    "lint": "ng lint"
   },
-  "private": false,
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
-  },
-  "browserslist": [
-    "last 2 Chrome versions",
-    "last 2 Firefox versions",
-    "last 2 Safari versions",
-    "last 2 Edge versions",
-    "iOS >= 12",
-    "Android >= 8"
-  ],
+  "private": true,
   "dependencies": {
     "@angular/animations": "^17.0.0",
     "@angular/cdk": "^17.0.0",
@@ -83,54 +29,19 @@
     "ng2-charts": "^5.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.14.0",
-    "lodash-es": "^4.17.21",
-    "date-fns": "^2.30.0",
-    "uuid": "^9.0.0"
+    "zone.js": "~0.14.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.0.0",
     "@angular/cli": "^17.0.0",
     "@angular/compiler-cli": "^17.0.0",
     "@types/jasmine": "~5.1.0",
-    "@types/lodash-es": "^4.17.12",
-    "@types/uuid": "^9.0.7",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.42.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "eslint-plugin-rxjs": "^5.0.3",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "prettier": "^3.0.0",
-    "standard-version": "^9.5.0",
-    "lint-staged": "^15.0.0",
-    "husky": "^8.0.0",
-    "@lhci/cli": "^0.12.0",
-    "webpack-bundle-analyzer": "^4.9.0",
     "typescript": "~5.2.0"
-  },
-  "lint-staged": {
-    "src/**/*.{ts,html,scss,json}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
-  "standard-version": {
-    "scripts": {
-      "prebump": "npm run test:ci && npm run lint",
-      "precommit": "npm run build:prod"
-    }
   }
 }
