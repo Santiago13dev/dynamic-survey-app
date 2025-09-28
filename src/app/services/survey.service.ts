@@ -241,4 +241,13 @@ export class SurveyService {
       })
     );
   }
+
+  // Export methods for analytics
+  exportSurveys(): Survey[] {
+    return this.surveysSubject.value;
+  }
+
+  exportResponses(): SurveyResponse[] {
+    return this.responsesSubject.value;
+  }
 }
