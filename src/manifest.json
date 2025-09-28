@@ -1,0 +1,140 @@
+{
+  "name": "Dynamic Survey App",
+  "short_name": "Surveys",
+  "description": "Aplicación profesional para crear, gestionar y analizar encuestas dinámicas",
+  "theme_color": "#2196F3",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "business", "utilities"],
+  "lang": "es-ES",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "assets/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Crear Encuesta",
+      "short_name": "Crear",
+      "description": "Crear una nueva encuesta rápidamente",
+      "url": "/surveys/new",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-create.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Mis Encuestas",
+      "short_name": "Encuestas",
+      "description": "Ver y gestionar mis encuestas",
+      "url": "/surveys",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-list.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Analíticas",
+      "short_name": "Resultados",
+      "description": "Ver resultados y analíticas",
+      "url": "/analytics",
+      "icons": [
+        {
+          "src": "assets/icons/shortcut-analytics.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Pantalla principal en desktop"
+    },
+    {
+      "src": "assets/screenshots/mobile-surveys.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Lista de encuestas en móvil"
+    },
+    {
+      "src": "assets/screenshots/tablet-create.png",
+      "sizes": "768x1024",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Creador de encuestas en tablet"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+survey",
+      "url": "/surveys/%s"
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  }
+}
