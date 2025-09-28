@@ -1,0 +1,68 @@
+.theme-toggle-container {
+  display: flex;
+  align-items: center;
+}
+
+.theme-toggle-button {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.theme-menu {
+  .mat-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+    
+    &.active {
+      background-color: rgba(var(--mat-primary-rgb), 0.1);
+      color: var(--mat-primary-color);
+    }
+    
+    &:hover {
+      background-color: rgba(var(--mat-primary-rgb), 0.08);
+    }
+  }
+  
+  .check-icon {
+    margin-left: auto;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Global theme styles
+:root {
+  --primary-color: #1976d2;
+  --accent-color: #ff4081;
+  --border-radius: 8px;
+  --elevation: 4;
+}
+
+body.light-theme {
+  --background-color: #fafafa;
+  --surface-color: #ffffff;
+  --text-color: #212121;
+  --text-secondary: #757575;
+}
+
+body.dark-theme {
+  --background-color: #121212;
+  --surface-color: #1e1e1e;
+  --text-color: #ffffff;
+  --text-secondary: #b3b3b3;
+  
+  .mat-toolbar {
+    background: var(--surface-color) !important;
+  }
+  
+  .mat-card {
+    background: var(--surface-color) !important;
+    color: var(--text-color) !important;
+  }
+}
