@@ -4,38 +4,411 @@
 /* Include the common styles for Angular Material components. */
 @include mat.core();
 
-/* Define a color palette and a light theme. */
-$primary: mat.define-palette(mat.$indigo-palette);
-$accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-$warn: mat.define-palette(mat.$red-palette);
+/* Define custom color palettes for a minimalist design */
+$primary: mat.define-palette((
+  50: #f8f9fa,
+  100: #e9ecef,
+  200: #dee2e6,
+  300: #ced4da,
+  400: #adb5bd,
+  500: #6c757d,
+  600: #495057,
+  700: #343a40,
+  800: #212529,
+  900: #212529,
+  A100: #f8f9fa,
+  A200: #e9ecef,
+  A400: #6c757d,
+  A700: #495057,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: rgba(black, 0.87),
+    A400: white,
+    A700: white,
+  )
+));
 
-$theme: mat.define-light-theme((
+$accent: mat.define-palette((
+  50: #e3f2fd,
+  100: #bbdefb,
+  200: #90caf9,
+  300: #64b5f6,
+  400: #42a5f5,
+  500: #2196f3,
+  600: #1e88e5,
+  700: #1976d2,
+  800: #1565c0,
+  900: #0d47a1,
+  A100: #82b1ff,
+  A200: #448aff,
+  A400: #2979ff,
+  A700: #2962ff,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+));
+
+$warn: mat.define-palette((
+  50: #ffebee,
+  100: #ffcdd2,
+  200: #ef9a9a,
+  300: #e57373,
+  400: #ef5350,
+  500: #f44336,
+  600: #e53935,
+  700: #d32f2f,
+  800: #c62828,
+  900: #b71c1c,
+  A100: #ff8a80,
+  A200: #ff5252,
+  A400: #ff1744,
+  A700: #d50000,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+));
+
+/* Define light theme */
+$light-theme: mat.define-light-theme((
   color: (
     primary: $primary,
     accent: $accent,
     warn: $warn,
   ),
+  typography: mat.define-typography-config(
+    $font-family: '"Inter", "Segoe UI", "Roboto", -apple-system, BlinkMacSystemFont, sans-serif',
+    $headline-1: mat.define-typography-level(2rem, 2.5rem, 300, $letter-spacing: -0.02em),
+    $headline-2: mat.define-typography-level(1.75rem, 2.25rem, 300, $letter-spacing: -0.01em),
+    $headline-3: mat.define-typography-level(1.5rem, 2rem, 400, $letter-spacing: -0.01em),
+    $headline-4: mat.define-typography-level(1.25rem, 1.75rem, 400, $letter-spacing: -0.005em),
+    $headline-5: mat.define-typography-level(1.125rem, 1.5rem, 400),
+    $headline-6: mat.define-typography-level(1rem, 1.375rem, 500),
+    $body-1: mat.define-typography-level(1rem, 1.5rem, 400),
+    $body-2: mat.define-typography-level(0.875rem, 1.25rem, 400),
+    $caption: mat.define-typography-level(0.75rem, 1rem, 400),
+    $button: mat.define-typography-level(0.875rem, 1rem, 500, $letter-spacing: 0.02em),
+  ),
 ));
 
-/* Apply the theme to all Angular Material components. */
-@include mat.all-component-themes($theme);
+/* Apply the theme to all Angular Material components */
+@include mat.all-component-themes($light-theme);
 
-/* Global styles */
-body {
-  margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
-  background-color: #fafafa;
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Global CSS Variables for consistent theming */
+:root {
+  --primary-color: #6c757d;
+  --accent-color: #2196f3;
+  --warn-color: #f44336;
+  --success-color: #4caf50;
+  --background-color: #fafafa;
+  --surface-color: #ffffff;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #e9ecef;
+  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-medium: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --shadow-strong: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --border-radius: 8px;
+  --border-radius-large: 12px;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.25s ease-in-out;
+  --transition-slow: 0.35s ease-in-out;
 }
 
+/* Global styles reset and base */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Container and layout utilities */
 .container {
   margin: 0 auto;
-  padding: 1rem;
+  padding: var(--spacing-lg);
   max-width: 1200px;
-}
-
-/* Simple responsive utilities */
-.full-width {
   width: 100%;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.container-sm {
+  max-width: 800px;
+}
+
+.container-xs {
+  max-width: 600px;
+}
+
+/* Spacing utilities */
+.mt-0 { margin-top: 0 !important; }
+.mt-1 { margin-top: var(--spacing-xs) !important; }
+.mt-2 { margin-top: var(--spacing-sm) !important; }
+.mt-3 { margin-top: var(--spacing-md) !important; }
+.mt-4 { margin-top: var(--spacing-lg) !important; }
+.mt-5 { margin-top: var(--spacing-xl) !important; }
+
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: var(--spacing-xs) !important; }
+.mb-2 { margin-bottom: var(--spacing-sm) !important; }
+.mb-3 { margin-bottom: var(--spacing-md) !important; }
+.mb-4 { margin-bottom: var(--spacing-lg) !important; }
+.mb-5 { margin-bottom: var(--spacing-xl) !important; }
+
+.p-0 { padding: 0 !important; }
+.p-1 { padding: var(--spacing-xs) !important; }
+.p-2 { padding: var(--spacing-sm) !important; }
+.p-3 { padding: var(--spacing-md) !important; }
+.p-4 { padding: var(--spacing-lg) !important; }
+.p-5 { padding: var(--spacing-xl) !important; }
+
+/* Flex utilities */
+.d-flex { display: flex !important; }
+.flex-column { flex-direction: column !important; }
+.flex-row { flex-direction: row !important; }
+.justify-content-center { justify-content: center !important; }
+.justify-content-between { justify-content: space-between !important; }
+.justify-content-around { justify-content: space-around !important; }
+.align-items-center { align-items: center !important; }
+.align-items-start { align-items: flex-start !important; }
+.align-items-end { align-items: flex-end !important; }
+
+/* Responsive utilities */
+.full-width {
+  width: 100% !important;
+}
+
+.text-center { text-align: center !important; }
+.text-left { text-align: left !important; }
+.text-right { text-align: right !important; }
+
+/* Card styling improvements */
+.mat-mdc-card {
+  border-radius: var(--border-radius-large) !important;
+  box-shadow: var(--shadow-light) !important;
+  border: 1px solid var(--border-color) !important;
+  transition: all var(--transition-normal) !important;
+  margin-bottom: var(--spacing-lg) !important;
+}
+
+.mat-mdc-card:hover {
+  box-shadow: var(--shadow-medium) !important;
+  transform: translateY(-1px);
+}
+
+.mat-mdc-card-title {
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  margin-bottom: var(--spacing-md) !important;
+}
+
+/* Button styling improvements */
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button {
+  border-radius: var(--border-radius) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  transition: all var(--transition-fast) !important;
+  text-transform: none !important;
+  min-height: 40px !important;
+  padding: 0 var(--spacing-lg) !important;
+}
+
+.mat-mdc-raised-button:hover,
+.mat-mdc-outlined-button:hover,
+.mat-mdc-unelevated-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium) !important;
+}
+
+/* Form field improvements */
+.mat-mdc-form-field {
+  margin-bottom: var(--spacing-md) !important;
+}
+
+.mat-mdc-text-field-wrapper {
+  border-radius: var(--border-radius) !important;
+}
+
+.mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__leading,
+.mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__notch,
+.mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__trailing {
+  border-radius: var(--border-radius) !important;
+}
+
+/* Table improvements */
+.mat-mdc-table {
+  border-radius: var(--border-radius) !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow-light) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.mat-mdc-header-row {
+  background-color: var(--background-color) !important;
+}
+
+.mat-mdc-row:hover {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Toolbar improvements */
+.mat-toolbar {
+  box-shadow: var(--shadow-light) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn var(--transition-normal) ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp var(--transition-normal) ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Loading spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .mat-mdc-card {
+    margin: var(--spacing-sm);
+  }
+  
+  .mat-mdc-table {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .mat-mdc-raised-button,
+  .mat-mdc-outlined-button,
+  .mat-mdc-unelevated-button {
+    width: 100%;
+    margin-bottom: var(--spacing-sm);
+  }
+}
+
+/* Success state styling */
+.success {
+  color: var(--success-color) !important;
+}
+
+.success-bg {
+  background-color: var(--success-color) !important;
+  color: white !important;
+}
+
+/* Custom elevation classes */
+.elevation-0 { box-shadow: none !important; }
+.elevation-1 { box-shadow: var(--shadow-light) !important; }
+.elevation-2 { box-shadow: var(--shadow-medium) !important; }
+.elevation-3 { box-shadow: var(--shadow-strong) !important; }
