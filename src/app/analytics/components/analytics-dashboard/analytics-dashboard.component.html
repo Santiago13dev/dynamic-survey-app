@@ -1,0 +1,194 @@
+<div class="analytics-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <mat-icon class="dashboard-icon">analytics</mat-icon>
+      <div class="header-text">
+        <h1>Panel de Análisis</h1>
+        <p>Visualiza estadísticas detalladas de tus encuestas</p>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <button mat-stroked-button (click)="refreshData()" [disabled]="isLoading">
+        <mat-icon>refresh</mat-icon>
+        Actualizar
+      </button>
+      
+      <button mat-button [matMenuTriggerFor]="exportMenu">
+        <mat-icon>download</mat-icon>
+        Exportar
+      </button>
+      
+      <mat-menu #exportMenu="matMenu">
+        <button mat-menu-item (click)="exportData('csv')">
+          <mat-icon>table_chart</mat-icon>
+          Exportar CSV
+        </button>
+        <button mat-menu-item (click)="exportData('json')">
+          <mat-icon>code</mat-icon>
+          Exportar JSON
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Cargando datos de análisis...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading" class="dashboard-content">
+    
+    <!-- Stats Cards -->
+    <div class="stats-grid" *ngIf="stats$ | async as stats">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-info">
+              <h3>{{ stats.totalSurveys }}</h3>
+              <p>Encuestas Totales</p>
+            </div>
+            <mat-icon class="stat-icon">poll</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-info">
+              <h3>{{ stats.totalResponses }}</h3>
+              <p>Respuestas Totales</p>
+            </div>
+            <mat-icon class="stat-icon">people</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-info">
+              <h3>{{ stats.averageCompletion }}%</h3>
+              <p>Completación Promedio</p>
+            </div>
+            <mat-icon class="stat-icon">trending_up</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-info">
+              <h3>{{ (surveys$ | async)?.filter(s => s.status === 'active').length || 0 }}</h3>
+              <p>Encuestas Activas</p>
+            </div>
+            <mat-icon class="stat-icon">check_circle</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      
+      <!-- Trends Chart -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Tendencias de Respuestas</mat-card-title>
+          <div class="chart-controls">
+            <mat-form-field appearance="outline">
+              <mat-label>Período</mat-label>
+              <mat-select [(value)]="selectedPeriod" (selectionChange)="onPeriodChange()">
+                <mat-option value="daily">Diario</mat-option>
+                <mat-option value="weekly">Semanal</mat-option>
+                <mat-option value="monthly">Mensual</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container" *ngIf="trendsChart">
+            <canvas baseChart
+              [data]="trendsChart"
+              [options]="chartOptions"
+              type="line"
+              width="400"
+              height="200">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Category Distribution -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Distribución por Categoría</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container" *ngIf="categoryChart">
+            <canvas baseChart
+              [data]="categoryChart"
+              [options]="pieChartOptions"
+              type="pie"
+              width="400"
+              height="200">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Completion Rates -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Tasas de Completación por Encuesta</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container" *ngIf="completionChart">
+            <canvas baseChart
+              [data]="completionChart"
+              [options]="chartOptions"
+              type="bar"
+              width="400"
+              height="200">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Recent Activity -->
+    <mat-card class="activity-card">
+      <mat-card-header>
+        <mat-card-title>Encuestas Recientes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="recent-surveys" *ngIf="surveys$ | async as surveys">
+          <div 
+            *ngFor="let survey of surveys.slice(0, 5); trackBy: trackByFn" 
+            class="survey-item">
+            <div class="survey-info">
+              <h4>{{ survey.titulo }}</h4>
+              <p>{{ survey.descripcion || 'Sin descripción' }}</p>
+              <div class="survey-meta">
+                <span class="status-badge" [class]="getStatusClass(survey.status)">
+                  {{ getStatusLabel(survey.status) }}
+                </span>
+                <span class="response-count">{{ survey.respuestas }} respuestas</span>
+              </div>
+            </div>
+            <div class="survey-actions">
+              <button mat-icon-button [routerLink]="['/survey/results', survey.id]">
+                <mat-icon>bar_chart</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

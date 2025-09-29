@@ -1,0 +1,28 @@
+<div class="theme-toggle-container">
+  <button 
+    mat-icon-button 
+    [matMenuTriggerFor]="themeMenu"
+    class="theme-toggle-button"
+    [title]="'Tema actual: ' + getCurrentLabel()">
+    <mat-icon>{{ getCurrentIcon() }}</mat-icon>
+  </button>
+
+  <mat-menu #themeMenu="matMenu" class="theme-menu">
+    <button 
+      mat-menu-item 
+      *ngFor="let option of themeOptions" 
+      (click)="setThemeMode(option.value)"
+      [class.active]="currentTheme.mode === option.value">
+      <mat-icon>{{ option.icon }}</mat-icon>
+      <span>{{ option.label }}</span>
+      <mat-icon *ngIf="currentTheme.mode === option.value" class="check-icon">check</mat-icon>
+    </button>
+    
+    <mat-divider></mat-divider>
+    
+    <button mat-menu-item (click)="themeService.resetToDefault()">
+      <mat-icon>refresh</mat-icon>
+      <span>Restablecer tema</span>
+    </button>
+  </mat-menu>
+</div>
